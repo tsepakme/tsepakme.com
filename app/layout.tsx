@@ -10,6 +10,7 @@ import { baseUrl } from './sitemap'
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
+  icons: '',
   title: {
     default: `Aiusha Mikhailov`,
     template: `%s | Aiusha Mikhailov`,
@@ -52,6 +53,9 @@ export default function RootLayout({
         GeistMono.variable
       )}
     >
+      <head>
+      <link rel="icon" href="/icon?<generated>" type="image/png" sizes="32x32" />
+      </head>
       <body className="antialiased max-w-xl mx-4 mt-8 lg:mx-auto">
         <main className="flex-auto min-w-0 mt-6 flex flex-col px-2 md:px-0">
           <Navbar />
