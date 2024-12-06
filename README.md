@@ -10,3 +10,4 @@ This is a porfolio site template complete with a blog. Includes:
 - Tailwind v4
 - Vercel Speed Insights / Web Analytics
 
+
