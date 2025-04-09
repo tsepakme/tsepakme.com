@@ -109,7 +109,7 @@ export default function ResumePage() {
       <div className="mt-8">
         <a
           href="https://drive.google.com/file/d/1nHWiY8zfWpUEKTqWO3VwaAAUKH9XGtOb/view?usp=sharing"
-          className="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg"
+          className="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-100 cursor-pointer"
           download
         >
           Download PDF
