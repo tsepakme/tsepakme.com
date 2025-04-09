@@ -16,7 +16,7 @@ export default function ResumePage() {
             Hirschtec GmbH & Co. KG
           </a>
         </h3>
-        Mar 2023 - Present (+2 years)
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">Mar 2023 - Present (+2 years)</p>
         <ul>
           <li>Spearheaded the development of happycrm.de, enhancing CRM functionalities and user engagement
             by 10%, by integrating advanced JavaScript and TypeScript solutions.</li>
@@ -32,7 +32,7 @@ export default function ResumePage() {
             Timeweb
           </a>
         </h3>
-        Feb 2023 - Apr 2023 (3 months)
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">Feb 2023 - Apr 2023 (3 months)</p>
         <ul>
           <li>Led a comprehensive overhaul of the legacy codebase, transitioning to cutting-edge technologies,
             which catalyzed a 9% surge in website conversion rates.</li>
@@ -48,7 +48,7 @@ export default function ResumePage() {
             ATI.SU
           </a>
         </h3>
-        Mar 2022 - Feb 2023 (1 year)
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">Mar 2022 - Feb 2023 (1 year)</p>
         <ul>
           <li>Spearheaded the launch of 5+ internal services across 3 departments, enhancing operational
             efficiency by automating inspections using RESTful API services and webjobs, directly aligning with the
@@ -63,7 +63,7 @@ export default function ResumePage() {
         <h3>
           Full Stack Developer - Freelance
         </h3>
-        Jul 2019 - Mar 2022 (2 years 9 months)
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">Jul 2019 - Mar 2022 (2 years 9 months)</p>
         <ul>
           <li>Launched diverse web solutions, including websites and mobile applications, from inception to
             deployment, enhancing digital presence and user accessibility by adopting a pioneering mobile-first
@@ -83,7 +83,7 @@ export default function ResumePage() {
           ].map((skill) => (
             <span
               key={skill}
-              className="px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-sm hover:bg-neutral-200"
+              className="px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-sm hover:bg-neutral-200 transition-colors"
             >
               {skill}
             </span>
@@ -97,7 +97,7 @@ export default function ResumePage() {
             Novosibirsk State University of Architecture and Civil Engeering
           </a>
         </h3>
-        Jul 2009 - 2014
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">Jul 2009 - 2014</p>
         <p>Master of Engeering</p>
 
         <h2>Licenses & Certifications</h2>
@@ -108,8 +108,8 @@ export default function ResumePage() {
       </div>
       <div className="mt-8">
         <a
-          href="https://drive.google.com/file/d/1nHWiY8zfWpUEKTqWO3VwaAAUKH9XGtOb/view?usp=sharing"
-          className="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-100 cursor-pointer"
+          href="/resume.pdf"
+          className="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
           download
         >
           Download PDF
