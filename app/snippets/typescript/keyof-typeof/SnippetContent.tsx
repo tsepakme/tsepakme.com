@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, oneLight, materialDark, prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-// Объект с доступными темами
 const themes = {
   'VSCode Dark': vscDarkPlus,
   'One Light': oneLight,
