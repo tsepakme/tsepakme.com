@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { TagLink } from 'app/components/tag-link';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 
-// Компоненты для MDX
 const components = {
   a: ({ href, ...props }) => {
     if (href.startsWith('/')) {
@@ -15,16 +14,13 @@ const components = {
     }
     return <a target="_blank" rel="noopener noreferrer" {...props} />;
   },
-  // Другие компоненты при необходимости
 };
 
-// Генерация статических путей
 export async function generateStaticParams() {
   const slugs = getAllSnippetSlugs();
   return slugs.map(slug => ({ slug }));
 }
 
-// Метаданные для страницы
 export async function generateMetadata({ params }) {
   const snippet = await getSnippet(params.slug);
   
@@ -41,9 +37,7 @@ export async function generateMetadata({ params }) {
   };
 }
 
-// Компонент страницы
 export default async function SnippetPage({ params }) {
-  console.log('Rendering snippet page for slug:', params.slug);
   
   const snippet = await getSnippet(params.slug);
   

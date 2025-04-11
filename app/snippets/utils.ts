@@ -52,26 +52,20 @@ interface SnippetMetadata {
   tags?: string[];
 }
 
-// Получает список всех доступных сниппетов
 export function getSnippets() {
   try {
     const snippetsDir = path.join(process.cwd(), 'app', 'snippets', 'content');
     const filenames = fs.readdirSync(snippetsDir);
     
-    // Фильтруем только .mdx файлы
     const mdxFiles = filenames.filter(name => name.endsWith('.mdx'));
     
     const snippets = mdxFiles.map(filename => {
-      // Получаем slug из имени файла
       const slug = filename.replace(/\.mdx$/, '');
       
-      // Получаем полный путь к файлу
       const filePath = path.join(snippetsDir, filename);
       
-      // Читаем содержимое файла
       const fileContent = fs.readFileSync(filePath, 'utf8');
       
-      // Извлекаем frontmatter
       const { data: metadata } = matter(fileContent);
       
       return {
@@ -87,19 +81,15 @@ export function getSnippets() {
   }
 }
 
-// Получает все доступные слаги сниппетов
 export function getAllSnippetSlugs() {
   const snippets = getSnippets();
   return snippets.map(snippet => snippet.slug);
 }
 
-// Получает конкретный сниппет по слагу
 export async function getSnippet(slug: string) {
   try {
-    // Получаем список всех сниппетов
     const snippets = getSnippets();
     
-    // Находим нужный сниппет по слагу
     const snippet = snippets.find(s => s.slug === slug);
     
     if (!snippet) {
@@ -107,22 +97,17 @@ export async function getSnippet(slug: string) {
       return undefined;
     }
     
-    // Путь к MDX файлу
     const filePath = path.join(process.cwd(), 'app', 'snippets', 'content', `${slug}.mdx`);
     
-    // Проверяем, существует ли файл
     if (!fs.existsSync(filePath)) {
       console.error(`MDX file not found: ${filePath}`);
       return undefined;
     }
     
-    // Читаем содержимое файла
     const fileContent = fs.readFileSync(filePath, 'utf8');
     
-    // Парсим frontmatter и контент
     const { content, data } = matter(fileContent);
     
-    // Возвращаем объект с метаданными и содержимым
     return {
       ...snippet,
       content
@@ -150,7 +135,6 @@ export function getSnippetCategories() {
   });
 }
 
-// Функция для получения всех тегов из всех сниппетов
 export function getAllTags() {
   const snippets = getSnippets();
   const tagsSet = new Set<string>();
@@ -161,11 +145,9 @@ export function getAllTags() {
     }
   });
   
-  // Сортируем теги по алфавиту
   return Array.from(tagsSet).sort();
 }
 
-// Функция для получения сниппетов по тегу
 export function getTagSnippets(tag: string) {
   const snippets = getSnippets();
   return snippets.filter(snippet => 

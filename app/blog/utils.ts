@@ -3,38 +3,27 @@ import path from 'path';
 import matter from 'gray-matter';
 
 export function getBlogPosts() {
-  console.log("Getting blog posts...");
   
-  // Убедитесь, что путь к директории верный
   const postsDirectory = path.join(process.cwd(), 'app', 'blog', 'posts');
-  console.log("Posts directory:", postsDirectory);
   
-  // Проверяем существование директории
   if (!fs.existsSync(postsDirectory)) {
     console.error(`Directory not found: ${postsDirectory}`);
     return [];
   }
   
   try {
-    // Получаем список файлов
     const fileNames = fs.readdirSync(postsDirectory);
-    console.log("Found files:", fileNames);
     
     const posts = fileNames
       .filter(fileName => fileName.endsWith('.mdx'))
       .map(fileName => {
-        // Получаем slug из имени файла
         const slug = fileName.replace(/\.mdx$/, '');
         
-        // Полный путь к файлу
         const fullPath = path.join(postsDirectory, fileName);
         
-        // Читаем содержимое файла
         const fileContents = fs.readFileSync(fullPath, 'utf8');
         
-        // Извлекаем метаданные из frontmatter
         const { data } = matter(fileContents);
-        console.log(`Post ${slug} metadata:`, data);
         
         return {
           slug,
@@ -48,7 +37,6 @@ export function getBlogPosts() {
         };
       });
     
-    console.log(`Found ${posts.length} posts`);
     return posts;
   } catch (error) {
     console.error("Error getting blog posts:", error);
@@ -56,13 +44,11 @@ export function getBlogPosts() {
   }
 }
 
-// Получение конкретного блог-поста
 export async function getBlogPost(slug) {
   const postsDirectory = path.join(process.cwd(), 'app', 'blog', 'posts');
   const fullPath = path.join(postsDirectory, `${slug}.mdx`);
   
   try {
-    // Проверка существования файла
     if (!fs.existsSync(fullPath)) {
       console.error(`File not found: ${fullPath}`);
       return null;
@@ -71,14 +57,12 @@ export async function getBlogPost(slug) {
     const fileContents = fs.readFileSync(fullPath, 'utf8');
     const { data, content } = matter(fileContents);
     
-    // Теперь мы просто возвращаем контент в виде строки,
-    // а MDXRemote в компоненте сделает всю магию
     return {
       slug,
       title: data.title,
       description: data.description,
       publishedAt: data.publishedAt,
-      content: content, // Возвращаем необработанный MDX контент
+      content: content,
       difficulty: data.difficulty,
       tags: data.tags,
     };

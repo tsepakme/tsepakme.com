@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { TagLink } from "./tag-link";
 
-// Интерфейс для метаданных сниппета
 interface SnippetMetadata {
   title: string;
   description: string;
@@ -11,13 +10,11 @@ interface SnippetMetadata {
   tags?: string[];
 }
 
-// Интерфейс для сниппета
 interface Snippet {
   slug: string;
   metadata: SnippetMetadata;
 }
 
-// Props для компонента списка сниппетов
 interface SnippetsListProps {
   snippets: Snippet[];
   title?: string;
@@ -87,7 +84,6 @@ export function SnippetsList({ snippets, title, description }: SnippetsListProps
     }
   };
 
-  // Отображение заголовка и описания, если они переданы
   const renderHeader = () => {
     if (!title && !description) return null;
     
@@ -99,7 +95,6 @@ export function SnippetsList({ snippets, title, description }: SnippetsListProps
     );
   };
 
-  // Отображение сообщения, если список пуст
   const renderEmptyState = () => {
     return (
       <div className="border border-neutral-200 dark:border-neutral-800 rounded-lg p-8 text-center">

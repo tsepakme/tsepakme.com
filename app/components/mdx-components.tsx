@@ -3,9 +3,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import { MDXRemote } from 'next-mdx-remote/rsc';  // Добавьте этот импорт
+import { MDXRemote } from 'next-mdx-remote/rsc';
 
-// Компонент кнопки копирования
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
 
@@ -25,7 +24,6 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
-// Определяем компоненты напрямую
 export const components = {
   a: ({ href, ...props }) => {
     if (href?.startsWith('/')) {
@@ -58,7 +56,6 @@ export const components = {
   }
 };
 
-// Убедитесь, что все компоненты экспортируются явно
 export function ServerMDX({ source, components: userComponents = {} }) {
   if (!source) {
     return <div>No content available</div>;

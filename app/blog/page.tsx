@@ -9,7 +9,6 @@ export const metadata = {
 export default function Blog() {
   const posts = getBlogPosts();
   
-  console.log("Rendering blog page with", posts.length, "posts");
   
   return (
     <div className="flex flex-col gap-16">

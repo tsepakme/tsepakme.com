@@ -2,13 +2,11 @@ export function BlogPosts({ posts }) {
   return (
     <div className="flex flex-col gap-4">
       {(posts || [])
-        .filter(post => post && post.slug) // Убираем undefined и пустые посты
+        .filter(post => post && post.slug)
         .sort((a, b) => {
-          // Проверяем, существуют ли metadata и publishedAt
           const dateA = a.metadata?.publishedAt ? new Date(a.metadata.publishedAt) : new Date(0);
           const dateB = b.metadata?.publishedAt ? new Date(b.metadata.publishedAt) : new Date(0);
           
-          // Сортировка по убыванию (от новых к старым)
           return dateB.getTime() - dateA.getTime();
         })
         .map((post) => (
