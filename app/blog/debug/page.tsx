@@ -2,7 +2,6 @@ import fs from 'fs';
 import path from 'path';
 
 export default function DebugPage() {
-  // Проверяем директорию блог-постов
   const postsDirectory = path.join(process.cwd(), 'app', 'blog', 'posts');
   const fileExists = fs.existsSync(postsDirectory);
   
@@ -37,9 +36,8 @@ export default function DebugPage() {
   );
 }
 
-// Вспомогательная функция для получения структуры директорий
 function listDirectoryStructure(dir, depth = 0) {
-  if (depth > 3) return null; // Ограничиваем глубину рекурсии
+  if (depth > 3) return null;
   
   try {
     const items = fs.readdirSync(dir);
