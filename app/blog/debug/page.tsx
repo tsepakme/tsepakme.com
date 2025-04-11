@@ -6,7 +6,7 @@ export default function DebugPage() {
   const postsDirectory = path.join(process.cwd(), 'app', 'blog', 'posts');
   const fileExists = fs.existsSync(postsDirectory);
   
-  let files = [];
+  let files: string[] = [];
   if (fileExists) {
     files = fs.readdirSync(postsDirectory);
   }

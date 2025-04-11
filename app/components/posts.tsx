@@ -9,7 +9,7 @@ export function BlogPosts({ posts }) {
           const dateB = b.metadata?.publishedAt ? new Date(b.metadata.publishedAt) : new Date(0);
           
           // Сортировка по убыванию (от новых к старым)
-          return dateB - dateA;
+          return dateB.getTime() - dateA.getTime();
         })
         .map((post) => (
           <div key={post.slug} className="flex flex-col gap-2">
