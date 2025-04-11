@@ -1,35 +1,44 @@
-import Link from "next/link";
-import { formatDate, getBlogPosts } from "app/blog/utils";
-
-export function BlogPosts() {
-  let allBlogs = getBlogPosts();
-
+export function BlogPosts({ posts }) {
   return (
-    <div>
-      {allBlogs
+    <div className="flex flex-col gap-4">
+      {(posts || [])
+        .filter(post => post && post.slug) // Убираем undefined и пустые посты
         .sort((a, b) => {
-          if (
-            new Date(a.metadata.publishedAt) > new Date(b.metadata.publishedAt)
-          ) {
-            return -1;
-          }
-          return 1;
+          // Проверяем, существуют ли metadata и publishedAt
+          const dateA = a.metadata?.publishedAt ? new Date(a.metadata.publishedAt) : new Date(0);
+          const dateB = b.metadata?.publishedAt ? new Date(b.metadata.publishedAt) : new Date(0);
+          
+          // Сортировка по убыванию (от новых к старым)
+          return dateB - dateA;
         })
         .map((post) => (
-          <Link
-            key={post.slug}
-            className="flex flex-col space-y-1 mb-4"
-            href={`/blog/${post.slug}`}
-          >
-            <div className="w-full flex flex-col md:flex-row space-x-0 md:space-x-2">
-              <p className="text-neutral-600 dark:text-neutral-400 w-[160px] tabular-nums">
-                {formatDate(post.metadata.publishedAt, false)}
-              </p>
-              <p className="text-neutral-900 dark:text-neutral-100 tracking-tight">
-                {post.metadata.title}
-              </p>
+          <div key={post.slug} className="flex flex-col gap-2">
+            <div className="flex flex-col sm:flex-row justify-between gap-2">
+              <a
+                href={`/blog/${post.slug}`}
+                className="text-neutral-900 dark:text-neutral-100 text-base sm:text-lg font-medium underline-offset-4 hover:underline"
+              >
+                {post.metadata?.title || 'Untitled Post'}
+              </a>
+              {post.metadata?.publishedAt && (
+                <time
+                  dateTime={post.metadata.publishedAt}
+                  className="text-neutral-600 dark:text-neutral-400 text-sm sm:text-base tabular-nums"
+                >
+                  {new Date(post.metadata.publishedAt).toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
+                </time>
+              )}
             </div>
-          </Link>
+            {post.metadata?.description && (
+              <p className="text-neutral-600 dark:text-neutral-400 line-clamp-2">
+                {post.metadata.description}
+              </p>
+            )}
+          </div>
         ))}
     </div>
   );

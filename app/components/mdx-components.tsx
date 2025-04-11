@@ -1,10 +1,9 @@
 'use client';
 
-import { MDXRemote } from 'next-mdx-remote/rsc';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import { highlight } from 'sugar-high';
+import { MDXRemote } from 'next-mdx-remote/rsc';  // Добавьте этот импорт
 
 // Компонент кнопки копирования
 function CopyButton({ text }: { text: string }) {
@@ -26,19 +25,19 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
-// Компоненты для MDX
-const components = {
+// Определяем компоненты напрямую
+export const components = {
   a: ({ href, ...props }) => {
-    if (href.startsWith('/')) {
+    if (href?.startsWith('/')) {
       return <Link href={href} {...props} />;
     }
-    if (href.startsWith('#')) {
+    if (href?.startsWith('#')) {
       return <a {...props} />;
     }
     return <a target="_blank" rel="noopener noreferrer" {...props} />;
   },
-  Image: (props) => <Image alt={props.alt} className="rounded-lg" {...props} />,
-  img: (props) => <Image alt={props.alt} className="rounded-lg" {...props} />,
+  Image: (props) => <Image alt={props.alt || ''} className="rounded-lg" {...props} />,
+  img: (props) => <Image alt={props.alt || ''} className="rounded-lg" width={700} height={350} {...props} />,
   pre: ({ children }) => {
     const code = children?.props?.children || '';
     return (
@@ -49,10 +48,8 @@ const components = {
     );
   },
   code: ({ children, className }) => {
-    // Извлекаем язык из className (например, language-ts)
     const language = className ? className.replace('language-', '') : '';
     
-    // Применяем подсветку синтаксиса для inline кода
     if (!className) {
       return <code className="font-mono text-sm bg-neutral-100 dark:bg-neutral-800 p-0.5 rounded">{children}</code>;
     }
@@ -61,17 +58,18 @@ const components = {
   }
 };
 
-// Компонент для серверного рендеринга MDX
+// Убедитесь, что все компоненты экспортируются явно
 export function ServerMDX({ source, components: userComponents = {} }) {
   if (!source) {
     return <div>No content available</div>;
   }
   
+  const combinedComponents = { ...components, ...(userComponents || {}) };
   return (
     <div className="mdx-content">
       <MDXRemote
         source={source}
-        components={{ ...components, ...(userComponents || {}) }}
+        components={combinedComponents}
       />
     </div>
   );
