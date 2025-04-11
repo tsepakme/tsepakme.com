@@ -9,6 +9,9 @@ const navItems = {
   },
   "/resume": {
     name: "resume",
+  },
+  "/snippets": {
+    name: "snippets",
   }
 };
 
