@@ -1,9 +1,30 @@
 import Link from "next/link";
-import { getCategorySnippets } from "app/snippets/utils";
+import { TagLink } from "./tag-link";
 
-export function CategorySnippets({ category }: { category: string }) {
-  const snippets = getCategorySnippets(category);
+// Интерфейс для метаданных сниппета
+interface SnippetMetadata {
+  title: string;
+  description: string;
+  publishedAt: string;
+  category: string;
+  difficulty?: 'beginner' | 'intermediate' | 'advanced';
+  tags?: string[];
+}
 
+// Интерфейс для сниппета
+interface Snippet {
+  slug: string;
+  metadata: SnippetMetadata;
+}
+
+// Props для компонента списка сниппетов
+interface SnippetsListProps {
+  snippets: Snippet[];
+  title?: string;
+  description?: string;
+}
+
+export function SnippetsList({ snippets, title, description }: SnippetsListProps) {
   const getDifficultyBadge = (difficulty: string = 'beginner') => {
     const colors = {
       beginner: "bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400",
@@ -45,6 +66,18 @@ export function CategorySnippets({ category }: { category: string }) {
             <path d="M5,3L4.35,6.34H17.94L17.5,8.5H3.92L3.26,11.83H16.85L16.09,15.64L10.61,17.45L5.86,15.64L6.19,14H2.87L2.17,18L9.42,21L17.82,18L19.92,6.34H18.82L19.22,4.17H5.72L5,3Z" />
           </svg>
         );
+      case 'javascript':
+        return (
+          <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3,3H21V21H3V3M7.73,18.04C8.13,18.89 8.92,19.59 10.27,19.59C11.77,19.59 12.8,18.79 12.8,17.04V11.26H11.1V17C11.1,17.86 10.75,18.08 10.2,18.08C9.62,18.08 9.38,17.68 9.11,17.21L7.73,18.04M13.71,17.86C14.21,18.84 15.22,19.59 16.8,19.59C18.4,19.59 19.6,18.76 19.6,17.23C19.6,15.82 18.79,15.19 17.35,14.57L16.93,14.39C16.2,14.08 15.89,13.87 15.89,13.37C15.89,12.96 16.2,12.64 16.7,12.64C17.18,12.64 17.5,12.85 17.79,13.37L19.1,12.5C18.55,11.54 17.77,11.17 16.7,11.17C15.19,11.17 14.22,12.13 14.22,13.4C14.22,14.78 15.03,15.43 16.25,15.95L16.67,16.13C17.45,16.47 17.91,16.68 17.91,17.26C17.91,17.74 17.46,18.09 16.76,18.09C15.93,18.09 15.45,17.66 15.09,17.06L13.71,17.86Z" />
+          </svg>
+        );
+      case 'html':
+        return (
+          <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12,17.56L16.07,16.43L16.62,10.33H9.38L9.2,8.3H16.8L17,6.31H7L7.56,12.32H14.45L14.22,14.9L12,15.5L9.78,14.9L9.64,13.24H7.64L7.93,16.43L12,17.56M4.07,3H19.93L18.5,19.2L12,21L5.5,19.2L4.07,3Z" />
+          </svg>
+        );
       default:
         return (
           <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -54,58 +87,92 @@ export function CategorySnippets({ category }: { category: string }) {
     }
   };
 
+  // Отображение заголовка и описания, если они переданы
+  const renderHeader = () => {
+    if (!title && !description) return null;
+    
+    return (
+      <div className="mb-8">
+        {title && <h1 className="font-semibold text-2xl tracking-tighter mb-4">{title}</h1>}
+        {description && <p className="text-neutral-600 dark:text-neutral-400">{description}</p>}
+      </div>
+    );
+  };
+
+  // Отображение сообщения, если список пуст
+  const renderEmptyState = () => {
+    return (
+      <div className="border border-neutral-200 dark:border-neutral-800 rounded-lg p-8 text-center">
+        <p className="text-neutral-600 dark:text-neutral-400">No snippets found.</p>
+      </div>
+    );
+  };
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {snippets
-        .sort((a, b) => {
-          if (
-            new Date(a?.metadata.publishedAt) > new Date(b?.metadata.publishedAt)
-          ) {
-            return -1;
-          }
-          return 1;
-        })
-        .map((snippet) => (
-          <Link
-            key={snippet?.slug}
-            href={`/snippets/${snippet?.slug}`}
-            className="block group"
-          >
-            <div className="border border-neutral-200 dark:border-neutral-800 rounded-lg p-3 transition-all hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:shadow-sm">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-medium text-base group-hover:text-neutral-900 dark:group-hover:text-neutral-100 transition-colors">
-                  {snippet?.metadata.title}
-                </h3>
-                <div className="flex items-center text-neutral-500 dark:text-neutral-400 text-xs">
-                  <div className="w-4 h-4 mr-1 flex-shrink-0">
-                    {getCategoryIcon(snippet?.metadata.category)}
+    <div>
+      {renderHeader()}
+      
+      {snippets.length === 0 ? (
+        renderEmptyState()
+      ) : (
+        <div className="space-y-4">
+          {snippets
+            .sort((a, b) => {
+              if (
+                new Date(a?.metadata.publishedAt) > new Date(b?.metadata.publishedAt)
+              ) {
+                return -1;
+              }
+              return 1;
+            })
+            .map((snippet) => (
+              <div key={snippet?.slug} className="border border-neutral-200 dark:border-neutral-800 rounded-lg p-4 transition-all hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:shadow-sm">
+                <Link
+                  href={`/snippets/${snippet?.slug}`}
+                  className="group"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-medium text-lg group-hover:text-neutral-900 dark:group-hover:text-neutral-100 transition-colors">
+                      {snippet?.metadata.title}
+                    </h3>
+                    <div className="flex items-center text-neutral-500 dark:text-neutral-400 text-xs">
+                      {getCategoryIcon(snippet?.metadata.category)}
+                      <span className="capitalize">{snippet?.metadata.category}</span>
+                    </div>
                   </div>
-                  <span className="capitalize">{snippet?.metadata.category}</span>
+                  <p className="text-neutral-600 dark:text-neutral-400 text-sm mb-4">
+                    {snippet?.metadata.description}
+                  </p>
+                </Link>
+                
+                <div className="flex flex-wrap items-center gap-2">
+                  {getDifficultyBadge(snippet?.metadata.difficulty)}
+                  
+                  <div className="h-4 border-r border-neutral-200 dark:border-neutral-700 mx-1"></div>
+                  
+                  <div className="flex flex-wrap gap-1">
+                    {snippet?.metadata.tags?.map(tag => (
+                      <TagLink key={tag} tag={tag}>
+                        #{tag}
+                      </TagLink>
+                    ))}
+                  </div>
+                  
+                  <Link 
+                    href={`/snippets/${snippet?.slug}`}
+                    className="ml-auto text-neutral-600 dark:text-neutral-400 font-medium hover:text-neutral-900 dark:hover:text-neutral-200 transition-colors flex items-center"
+                  >
+                    View snippet
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
+                      <path d="M5 12h14"></path>
+                      <path d="m12 5 7 7-7 7"></path>
+                    </svg>
+                  </Link>
                 </div>
               </div>
-              <p className="text-neutral-600 dark:text-neutral-400 text-xs line-clamp-2 mb-3">
-                {snippet?.metadata.description}
-              </p>
-              <div className="flex justify-between items-center text-xs">
-                {getDifficultyBadge(snippet?.metadata.difficulty)}
-                
-                {snippet?.metadata.tags && snippet.metadata.tags.length > 0 && (
-                  <div className="bg-neutral-100 dark:bg-neutral-800 rounded-full px-2 py-0.5 text-neutral-600 dark:text-neutral-400 mx-2">
-                    #{snippet.metadata.tags[0]}
-                  </div>
-                )}
-                
-                <div className="mt-1 text-neutral-600 dark:text-neutral-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity flex items-center ml-auto">
-                  View snippet
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
-                    <path d="M5 12h14"></path>
-                    <path d="m12 5 7 7-7 7"></path>
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </Link>
-        ))}
+            ))}
+        </div>
+      )}
     </div>
   );
 }

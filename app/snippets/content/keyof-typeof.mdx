@@ -1,0 +1,94 @@
+---
+title: "keyof typeof Pattern"
+description: "Create type-safe string union types from object keys"
+publishedAt: "2025-04-05"
+category: "typescript"
+difficulty: "beginner"
+tags: ["type-safety", "utility-types"]
+---
+
+# keyof typeof Pattern
+
+A TypeScript pattern to create type-safe string unions from object keys. Perfect for constants, enums, and type-safe references.
+
+## Snippet
+
+```ts
+const STATUS = {
+  SUCCESS: "success",
+  ERROR: "error",
+  PENDING: "pending"
+} as const;
+
+type StatusType = keyof typeof STATUS;
+
+function handleStatus(status: StatusType) {
+  return STATUS[status];
+}
+```
+
+## Usage Example
+
+```ts
+// ✅ Valid - TypeScript knows these are correct keys
+handleStatus("SUCCESS"); // Returns "success"
+handleStatus("ERROR");   // Returns "error"
+
+// ❌ TypeScript Error - "COMPLETED" is not a valid status
+handleStatus("COMPLETED");
+```
+
+## Getting Value Types
+
+```ts
+// Get the union of value types ("success" | "error" | "pending")
+type StatusValue = typeof STATUS[keyof typeof STATUS];
+
+// Function that accepts only the specific string values
+function processStatusValue(value: StatusValue) {
+  console.log(`Processing status: ${value}`);
+}
+
+// ✅ Valid
+processStatusValue("success");
+// ❌ Error - only the exact string literals are allowed
+processStatusValue("done");
+```
+
+## Real World Example
+
+```ts
+// API routes definition
+const API_ENDPOINTS = {
+  USERS: "/api/users",
+  PRODUCTS: "/api/products",
+  ORDERS: "/api/orders"
+} as const;
+
+type ApiEndpoint = keyof typeof API_ENDPOINTS;
+
+// Type-safe API client
+function apiClient(endpoint: ApiEndpoint, options?: RequestInit) {
+  return fetch(API_ENDPOINTS[endpoint], options);
+}
+
+// Usage
+apiClient("USERS"); // Type-safe
+```
+
+## Types Only Version
+
+```ts
+// For use in .d.ts files or type-only contexts
+const STATUS = {
+  SUCCESS: "success",
+  ERROR: "error",
+  PENDING: "pending"
+} as const;
+
+type StatusType = keyof typeof STATUS;
+type StatusValue = typeof STATUS[StatusType];
+
+// Export just the types
+export type { StatusType, StatusValue };
+```

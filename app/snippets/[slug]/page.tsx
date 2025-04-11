@@ -1,69 +1,58 @@
-import { getSnippets, CATEGORIES_MAP } from "app/snippets/utils";
-import { notFound } from "next/navigation";
-import fs from "fs";
-import path from "path";
-import { ServerMDX } from "app/components/server-mdx";
+import { getSnippet, getAllSnippetSlugs } from 'app/snippets/utils';
+import { notFound } from 'next/navigation';
+import { ServerMDX } from 'app/components/mdx-components';
+import { TagLink } from 'app/components/tag-link';
+import Link from 'next/link';
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const snippets = getSnippets();
-  const snippet = snippets.find((s) => s?.slug === params.slug);
-
-  if (!snippet) {
-    return {
-      title: "Snippet Not Found",
-    };
-  }
-
-  return {
-    title: snippet.metadata.title,
-    description: snippet.metadata.description,
-  };
+export async function generateStaticParams() {
+  const snippets = getAllSnippetSlugs();
+  return snippets.map((slug) => ({ slug }));
 }
 
 export default async function SnippetPage({ params }: { params: { slug: string } }) {
-  const snippets = getSnippets();
-  const snippet = snippets.find((s) => s?.slug === params.slug);
-
+  const snippet = await getSnippet(params.slug);
+  
   if (!snippet) {
     notFound();
   }
-
-  const categoryInfo = CATEGORIES_MAP[snippet.metadata.category];
-
-  const filePath = path.join(process.cwd(), "app/snippets/content", `${params.slug}.mdx`);
-  const source = fs.readFileSync(filePath, "utf8");
-
+  
   return (
     <section>
-      <div className="flex items-center gap-2 mb-8">
-        <a
+      <div className="flex flex-col gap-2 mb-8">
+        <Link 
           href="/snippets"
           className="text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
         >
-          Snippets
-        </a>
-        <span className="text-neutral-300 dark:text-neutral-700">/</span>
-        <a
-          href={`/snippets/category/${snippet.metadata.category}`}
-          className="text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
-        >
-          {categoryInfo?.name || snippet.metadata.category}
-        </a>
-        <span className="text-neutral-300 dark:text-neutral-700">/</span>
-        <h1 className="font-semibold text-2xl tracking-tighter">{snippet.metadata.title}</h1>
+          ← Back to snippets
+        </Link>
+        <h1 className="font-semibold text-2xl tracking-tighter mt-2">{snippet.metadata.title}</h1>
+        <p className="text-neutral-600 dark:text-neutral-400">{snippet.metadata.description}</p>
+        
+        <div className="flex items-center gap-2 mt-4">
+          <div className="rounded-full px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 text-xs">
+            {snippet.metadata.category}
+          </div>
+          {snippet.metadata.difficulty && (
+            <div className="rounded-full px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 text-xs capitalize">
+              {snippet.metadata.difficulty}
+            </div>
+          )}
+        </div>
       </div>
-
+      
       <div className="prose prose-neutral dark:prose-invert max-w-none">
-        <ServerMDX source={source} />
+        {snippet.content && <ServerMDX source={snippet.content} />}
       </div>
-
-      <div className="flex flex-wrap gap-2 mt-4">
-        {snippet.metadata.tags?.map(tag => (
-          <span key={tag} className="text-xs bg-neutral-100 dark:bg-neutral-800 rounded-full px-2 py-1">
-            #{tag}
-          </span>
-        ))}
-      </div>
+      
+      {snippet.metadata.tags && snippet.metadata.tags.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-8">
+          {snippet.metadata.tags.map(tag => (
+            <TagLink key={tag} tag={tag}>
+              #{tag}
+            </TagLink>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

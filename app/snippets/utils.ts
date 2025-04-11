@@ -1,6 +1,7 @@
 import path from "path";
 import fs from "fs";
 import { cache } from "react";
+import matter from 'gray-matter';
 
 export const CATEGORIES = {
   TYPESCRIPT: "typescript",
@@ -106,4 +107,80 @@ export function getSnippetCategories() {
       count,
     };
   });
+}
+
+// Функция для получения всех тегов из всех сниппетов
+export function getAllTags() {
+  const snippets = getSnippets();
+  const tagsSet = new Set<string>();
+  
+  snippets.forEach(snippet => {
+    if (snippet?.metadata.tags) {
+      snippet.metadata.tags.forEach(tag => tagsSet.add(tag));
+    }
+  });
+  
+  // Сортируем теги по алфавиту
+  return Array.from(tagsSet).sort();
+}
+
+// Функция для получения сниппетов по тегу
+export function getTagSnippets(tag: string) {
+  const snippets = getSnippets();
+  return snippets.filter(snippet => 
+    snippet?.metadata.tags?.includes(tag)
+  );
+}
+
+/**
+ * Получает все слаги (URL-идентификаторы) сниппетов
+ * @returns Массив строк со слагами всех сниппетов
+ */
+export function getAllSnippetSlugs() {
+  // Используем существующую функцию getSnippets и извлекаем слаги
+  const snippets = getSnippets();
+  return snippets.map(snippet => snippet?.slug);
+}
+
+/**
+ * Получает конкретный сниппет по его слагу
+ * @param slug Идентификатор сниппета
+ * @returns Объект сниппета с контентом и метаданными или undefined, если сниппет не найден
+ */
+export async function getSnippet(slug: string) {
+  // Получаем все сниппеты
+  const snippets = getSnippets();
+  
+  // Находим нужный сниппет по слагу
+  const snippet = snippets.find(s => s?.slug === slug);
+  
+  if (!snippet) {
+    return undefined;
+  }
+  
+  try {
+    // Путь к MDX файлу
+    const filePath = path.join(process.cwd(), 'app', 'snippets', 'content', `${slug}.mdx`);
+    
+    // Проверяем, существует ли файл
+    if (!fs.existsSync(filePath)) {
+      console.error(`File not found: ${filePath}`);
+      return undefined;
+    }
+    
+    // Читаем содержимое файла
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    
+    // Парсим frontmatter и контент
+    const { content, data } = matter(fileContent);
+    
+    // Возвращаем объект с метаданными и содержимым
+    return {
+      ...snippet,
+      content: content
+    };
+  } catch (error) {
+    console.error(`Error loading snippet ${slug}:`, error);
+    return undefined;
+  }
 }

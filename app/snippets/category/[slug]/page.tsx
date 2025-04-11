@@ -1,4 +1,4 @@
-import { CategorySnippets } from "app/components/snippets";
+import { CategorySnippets } from "app/components/category-snippets";
 import { CATEGORIES_MAP } from "app/snippets/utils";
 import { notFound } from "next/navigation";
 
