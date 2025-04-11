@@ -1,98 +1,92 @@
-import { notFound } from "next/navigation";
-import { CustomMDX } from "app/components/mdx";
-import { formatDate, getBlogPosts } from "app/blog/utils";
-import { baseUrl } from "app/sitemap";
+import { MDXRemote } from 'next-mdx-remote/rsc';
+import Link from 'next/link';
+import Image from 'next/image';
+import { notFound } from 'next/navigation';
+import { getBlogPost, getBlogPosts } from '../utils';
+
+export const dynamicParams = false;
 
 export async function generateStaticParams() {
-  let posts = getBlogPosts();
-
+  const posts = getBlogPosts();
   return posts.map((post) => ({
     slug: post.slug,
   }));
 }
 
-export function generateMetadata({ params }) {
-  let post = getBlogPosts().find((post) => post.slug === params.slug);
-  if (!post) {
-    return;
+const components = {
+  a: ({ href, ...props }) => {
+    if (href?.startsWith('/')) {
+      return <Link href={href} {...props} />;
+    }
+    if (href?.startsWith('#')) {
+      return <a {...props} />;
+    }
+    return <a target="_blank" rel="noopener noreferrer" {...props} />;
+  },
+  img: (props) => <Image alt={props.alt || ''} className="rounded-lg" width={700} height={350} {...props} />,
+  pre: ({ children }) => {
+    return <div className="relative group"><pre>{children}</pre></div>;
+  },
+  code: ({ children, className }) => {
+    if (!className) {
+      return <code className="font-mono text-sm bg-neutral-100 dark:bg-neutral-800 p-0.5 rounded">{children}</code>;
+    }
+    return <code className={className}>{children}</code>;
   }
+};
 
-  let {
-    title,
-    publishedAt: publishedTime,
-    summary: description,
-    image,
-  } = post.metadata;
-  let ogImage = image
-    ? image
-    : `${baseUrl}/og?title=${encodeURIComponent(title)}`;
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      type: "article",
-      publishedTime,
-      url: `${baseUrl}/blog/${post.slug}`,
-      images: [
-        {
-          url: ogImage,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [ogImage],
-    },
-  };
-}
-
-export default function Blog({ params }) {
-  let post = getBlogPosts().find((post) => post.slug === params.slug);
-
+export default async function BlogPost({ params }) {
+  const post = await getBlogPost(params.slug);
+  
   if (!post) {
     notFound();
   }
-
+  
   return (
-    <section>
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BlogPosting",
-            headline: post.metadata.title,
-            datePublished: post.metadata.publishedAt,
-            dateModified: post.metadata.publishedAt,
-            description: post.metadata.summary,
-            image: post.metadata.image
-              ? `${baseUrl}${post.metadata.image}`
-              : `/og?title=${encodeURIComponent(post.metadata.title)}`,
-            url: `${baseUrl}/blog/${post.slug}`,
-            author: {
-              "@type": "Person",
-              name: "My Portfolio",
-            },
-          }),
-        }}
-      />
-      <h1 className="title font-semibold text-2xl tracking-tighter">
-        {post.metadata.title}
-      </h1>
-      <div className="flex justify-between items-center mt-2 mb-8 text-sm">
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          {formatDate(post.metadata.publishedAt)}
-        </p>
+    <article className="prose prose-neutral dark:prose-invert max-w-none">
+      <h1>{post.title}</h1>
+      
+      <div className="flex items-center space-x-4 text-sm text-neutral-600 dark:text-neutral-400 mb-8">
+        <time dateTime={post.publishedAt}>
+          {new Date(post.publishedAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })}
+        </time>
+        
+        {post.difficulty && (
+          <span className="rounded-full px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-xs capitalize">
+            {post.difficulty}
+          </span>
+        )}
       </div>
-      <article className="prose">
-        <CustomMDX source={post.content} />
-      </article>
-    </section>
+      
+      <div className="mdx-content">
+        <MDXRemote source={post.content} components={components} />
+      </div>
+      
+      {post.tags && post.tags.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-8">
+          {post.tags.map(tag => (
+            <span 
+              key={tag} 
+              className="rounded-full px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 text-xs"
+            >
+              #{tag}
+            </span>
+          ))}
+        </div>
+      )}
+      
+      <div className="mt-8">
+        <Link 
+          href="/blog" 
+          className="text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
+        >
+          ← Back to blog
+        </Link>
+      </div>
+    </article>
   );
 }

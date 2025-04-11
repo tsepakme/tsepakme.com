@@ -1,15 +1,31 @@
-import { BlogPosts } from "app/components/posts";
+import { BlogPosts } from 'app/components/posts';
+import { getBlogPosts } from './utils';
 
 export const metadata = {
-  title: "Blog",
-  description: "Read my blog.",
+  title: 'Blog',
+  description: 'Read my thoughts on programming, design, and more.',
 };
 
-export default function Page() {
+export default function Blog() {
+  const posts = getBlogPosts();
+  
+  
   return (
-    <section>
-      <h1 className="font-semibold text-2xl mb-8 tracking-tighter">My Blog</h1>
-      <BlogPosts />
-    </section>
+    <div className="flex flex-col gap-16">
+      <div className="flex flex-col gap-2">
+        <h1 className="font-semibold text-2xl tracking-tighter">Blog</h1>
+        <p className="text-neutral-600 dark:text-neutral-400">
+          My thoughts on programming, design, and more.
+        </p>
+      </div>
+      
+      {posts.length > 0 ? (
+        <BlogPosts posts={posts} />
+      ) : (
+        <p className="text-neutral-600 dark:text-neutral-400">
+          No blog posts found. Check back soon!
+        </p>
+      )}
+    </div>
   );
 }

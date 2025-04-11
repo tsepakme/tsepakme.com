@@ -1,90 +1,109 @@
-import fs from 'fs'
-import path from 'path'
-
-type Metadata = {
-  title: string
-  publishedAt: string
-  summary: string
-  image?: string
-}
-
-function parseFrontmatter(fileContent: string) {
-  let frontmatterRegex = /---\s*([\s\S]*?)\s*---/
-  let match = frontmatterRegex.exec(fileContent)
-  let frontMatterBlock = match![1]
-  let content = fileContent.replace(frontmatterRegex, '').trim()
-  let frontMatterLines = frontMatterBlock.trim().split('\n')
-  let metadata: Partial<Metadata> = {}
-
-  frontMatterLines.forEach((line) => {
-    let [key, ...valueArr] = line.split(': ')
-    let value = valueArr.join(': ').trim()
-    value = value.replace(/^['"](.*)['"]$/, '$1') // Remove quotes
-    metadata[key.trim() as keyof Metadata] = value
-  })
-
-  return { metadata: metadata as Metadata, content }
-}
-
-function getMDXFiles(dir) {
-  return fs.readdirSync(dir).filter((file) => path.extname(file) === '.mdx')
-}
-
-function readMDXFile(filePath) {
-  let rawContent = fs.readFileSync(filePath, 'utf-8')
-  return parseFrontmatter(rawContent)
-}
-
-function getMDXData(dir) {
-  let mdxFiles = getMDXFiles(dir)
-  return mdxFiles.map((file) => {
-    let { metadata, content } = readMDXFile(path.join(dir, file))
-    let slug = path.basename(file, path.extname(file))
-
-    return {
-      metadata,
-      slug,
-      content,
-    }
-  })
-}
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
 
 export function getBlogPosts() {
-  return getMDXData(path.join(process.cwd(), 'app', 'blog', 'posts'))
+  
+  const postsDirectory = path.join(process.cwd(), 'app', 'blog', 'posts');
+  
+  if (!fs.existsSync(postsDirectory)) {
+    console.error(`Directory not found: ${postsDirectory}`);
+    return [];
+  }
+  
+  try {
+    const fileNames = fs.readdirSync(postsDirectory);
+    
+    const posts = fileNames
+      .filter(fileName => fileName.endsWith('.mdx'))
+      .map(fileName => {
+        const slug = fileName.replace(/\.mdx$/, '');
+        
+        const fullPath = path.join(postsDirectory, fileName);
+        
+        const fileContents = fs.readFileSync(fullPath, 'utf8');
+        
+        const { data } = matter(fileContents);
+        
+        return {
+          slug,
+          metadata: {
+            title: data.title,
+            description: data.description,
+            publishedAt: data.publishedAt,
+            ...(data.tags && { tags: data.tags }),
+            ...(data.difficulty && { difficulty: data.difficulty })
+          }
+        };
+      });
+    
+    return posts;
+  } catch (error) {
+    console.error("Error getting blog posts:", error);
+    return [];
+  }
+}
+
+export async function getBlogPost(slug) {
+  const postsDirectory = path.join(process.cwd(), 'app', 'blog', 'posts');
+  const fullPath = path.join(postsDirectory, `${slug}.mdx`);
+  
+  try {
+    if (!fs.existsSync(fullPath)) {
+      console.error(`File not found: ${fullPath}`);
+      return null;
+    }
+    
+    const fileContents = fs.readFileSync(fullPath, 'utf8');
+    const { data, content } = matter(fileContents);
+    
+    return {
+      slug,
+      title: data.title,
+      description: data.description,
+      publishedAt: data.publishedAt,
+      content: content,
+      difficulty: data.difficulty,
+      tags: data.tags,
+    };
+  } catch (error) {
+    console.error(`Error loading blog post ${slug}:`, error);
+    return null;
+  }
 }
 
 export function formatDate(date: string, includeRelative = false) {
-  let currentDate = new Date()
+  let currentDate = new Date();
   if (!date.includes('T')) {
-    date = `${date}T00:00:00`
+    date = `${date}T00:00:00`;
   }
-  let targetDate = new Date(date)
+  let targetDate = new Date(date);
 
-  let yearsAgo = currentDate.getFullYear() - targetDate.getFullYear()
-  let monthsAgo = currentDate.getMonth() - targetDate.getMonth()
-  let daysAgo = currentDate.getDate() - targetDate.getDate()
+  let yearsAgo = currentDate.getFullYear() - targetDate.getFullYear();
+  let monthsAgo = currentDate.getMonth() - targetDate.getMonth();
+  let daysAgo = currentDate.getDate() - targetDate.getDate();
 
-  let formattedDate = ''
+  let formattedDate = '';
 
   if (yearsAgo > 0) {
-    formattedDate = `${yearsAgo}y ago`
+    formattedDate = `${yearsAgo}y ago`;
   } else if (monthsAgo > 0) {
-    formattedDate = `${monthsAgo}mo ago`
+    formattedDate = `${monthsAgo}mo ago`;
   } else if (daysAgo > 0) {
-    formattedDate = `${daysAgo}d ago`
+    formattedDate = `${daysAgo}d ago`;
   } else {
-    formattedDate = 'Today'
+    formattedDate = 'Today';
   }
 
   let fullDate = targetDate.toLocaleString('en-us', {
     month: 'long',
     day: 'numeric',
     year: 'numeric',
-  })
+  });
 
   if (!includeRelative) {
-    return fullDate
+    return fullDate;
   }
 
-  return `${fullDate} (${formattedDate})`
+  return `${fullDate} (${formattedDate})`;
 }
