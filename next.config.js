@@ -1,18 +1,28 @@
-const withMDX = require('@next/mdx')({
-  extension: /\.mdx?$/,
-  options: {
-    remarkPlugins: [],
-    rehypePlugins: [],
-  },
-});
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Включаем SWC
   swcMinify: true,
   
-  // Поддержка MDX-файлов
-  pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
+  // Поддержка MDX файлов
+  experimental: {
+    mdxRs: true,
+  },
+
+  // Дополнительные опции для обработки MDX при необходимости
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.mdx?$/,
+      use: [
+        {
+          loader: '@mdx-js/loader',
+          options: {
+            providerImportSource: '@mdx-js/react',
+          },
+        },
+      ],
+    });
+    return config;
+  },
 };
 
-module.exports = withMDX(nextConfig);
+module.exports = nextConfig;

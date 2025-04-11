@@ -1,6 +1,5 @@
 import path from "path";
 import fs from "fs";
-import { cache } from "react";
 import matter from 'gray-matter';
 
 export const CATEGORIES = {
@@ -53,44 +52,86 @@ interface SnippetMetadata {
   tags?: string[];
 }
 
-export const getSnippets = cache(() => {
-  const snippetsDirectory = path.join(process.cwd(), "app/snippets/content");
-  const files = fs.readdirSync(snippetsDirectory);
-  
-  const snippets = files
-    .filter((file) => file.endsWith(".mdx"))
-    .map((file) => {
-      const slug = file.replace(/\.mdx$/, "");
-      const filePath = path.join(snippetsDirectory, file);
-      const content = fs.readFileSync(filePath, "utf8");
-
-      const metas = content.match(/export const metadata = ({[\s\S]*?});/);
-
-      if (!metas) {
-        return null;
-      }
-
-      let metadata;
-      try {
-        const metaString = metas[1].replace(
-          /(['"])?([a-zA-Z0-9_]+)(['"])?:/g,
-          '"$2":'
-        );
-        metadata = JSON.parse(metaString.replace(/'/g, '"'));
-      } catch (error) {
-        console.error(`Error parsing metadata for ${file}:`, error);
-        return null;
-      }
-
+// Получает список всех доступных сниппетов
+export function getSnippets() {
+  try {
+    const snippetsDir = path.join(process.cwd(), 'app', 'snippets', 'content');
+    const filenames = fs.readdirSync(snippetsDir);
+    
+    // Фильтруем только .mdx файлы
+    const mdxFiles = filenames.filter(name => name.endsWith('.mdx'));
+    
+    const snippets = mdxFiles.map(filename => {
+      // Получаем slug из имени файла
+      const slug = filename.replace(/\.mdx$/, '');
+      
+      // Получаем полный путь к файлу
+      const filePath = path.join(snippetsDir, filename);
+      
+      // Читаем содержимое файла
+      const fileContent = fs.readFileSync(filePath, 'utf8');
+      
+      // Извлекаем frontmatter
+      const { data: metadata } = matter(fileContent);
+      
       return {
         slug,
-        metadata,
+        metadata
       };
-    })
-    .filter(Boolean);
+    });
+    
+    return snippets;
+  } catch (error) {
+    console.error('Error getting snippets:', error);
+    return [];
+  }
+}
 
-  return snippets;
-});
+// Получает все доступные слаги сниппетов
+export function getAllSnippetSlugs() {
+  const snippets = getSnippets();
+  return snippets.map(snippet => snippet.slug);
+}
+
+// Получает конкретный сниппет по слагу
+export async function getSnippet(slug: string) {
+  try {
+    // Получаем список всех сниппетов
+    const snippets = getSnippets();
+    
+    // Находим нужный сниппет по слагу
+    const snippet = snippets.find(s => s.slug === slug);
+    
+    if (!snippet) {
+      console.error(`Snippet not found: ${slug}`);
+      return undefined;
+    }
+    
+    // Путь к MDX файлу
+    const filePath = path.join(process.cwd(), 'app', 'snippets', 'content', `${slug}.mdx`);
+    
+    // Проверяем, существует ли файл
+    if (!fs.existsSync(filePath)) {
+      console.error(`MDX file not found: ${filePath}`);
+      return undefined;
+    }
+    
+    // Читаем содержимое файла
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    
+    // Парсим frontmatter и контент
+    const { content, data } = matter(fileContent);
+    
+    // Возвращаем объект с метаданными и содержимым
+    return {
+      ...snippet,
+      content
+    };
+  } catch (error) {
+    console.error(`Error loading snippet ${slug}:`, error);
+    return undefined;
+  }
+}
 
 export function getCategorySnippets(category: string) {
   const snippets = getSnippets();
@@ -130,57 +171,4 @@ export function getTagSnippets(tag: string) {
   return snippets.filter(snippet => 
     snippet?.metadata.tags?.includes(tag)
   );
-}
-
-/**
- * Получает все слаги (URL-идентификаторы) сниппетов
- * @returns Массив строк со слагами всех сниппетов
- */
-export function getAllSnippetSlugs() {
-  // Используем существующую функцию getSnippets и извлекаем слаги
-  const snippets = getSnippets();
-  return snippets.map(snippet => snippet?.slug);
-}
-
-/**
- * Получает конкретный сниппет по его слагу
- * @param slug Идентификатор сниппета
- * @returns Объект сниппета с контентом и метаданными или undefined, если сниппет не найден
- */
-export async function getSnippet(slug: string) {
-  // Получаем все сниппеты
-  const snippets = getSnippets();
-  
-  // Находим нужный сниппет по слагу
-  const snippet = snippets.find(s => s?.slug === slug);
-  
-  if (!snippet) {
-    return undefined;
-  }
-  
-  try {
-    // Путь к MDX файлу
-    const filePath = path.join(process.cwd(), 'app', 'snippets', 'content', `${slug}.mdx`);
-    
-    // Проверяем, существует ли файл
-    if (!fs.existsSync(filePath)) {
-      console.error(`File not found: ${filePath}`);
-      return undefined;
-    }
-    
-    // Читаем содержимое файла
-    const fileContent = fs.readFileSync(filePath, 'utf8');
-    
-    // Парсим frontmatter и контент
-    const { content, data } = matter(fileContent);
-    
-    // Возвращаем объект с метаданными и содержимым
-    return {
-      ...snippet,
-      content: content
-    };
-  } catch (error) {
-    console.error(`Error loading snippet ${slug}:`, error);
-    return undefined;
-  }
 }
