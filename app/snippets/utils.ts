@@ -5,7 +5,7 @@ import matter from 'gray-matter';
 export const CATEGORIES = {
   TYPESCRIPT: "typescript",
   REACT: "react",
-  NEXTJS: "nextjs",
+  JAVASCRIPT: "javascript",
   CSS: "css",
 } as const;
 
@@ -20,9 +20,9 @@ export const CATEGORIES_MAP = {
     name: "React",
     description: "Hooks, components, patterns and performance optimizations",
   },
-  [CATEGORIES.NEXTJS]: {
-    name: "Next.js",
-    description: "App router, server components, and data fetching",
+  [CATEGORIES.JAVASCRIPT]: {
+    name: "JavaScript",
+    description: "Core language features, patterns, and best practices",
   },
   [CATEGORIES.CSS]: {
     name: "CSS",
