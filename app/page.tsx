@@ -1,9 +1,16 @@
 import { BlogPosts } from "app/components/posts";
-import { getBlogPosts } from "app/blog/utils";
+import { getBlogPosts } from "scripts/utils";
 
 export default function Page() {
-  const posts = getBlogPosts();
-  const recentPosts = posts.slice(0, 3);
+  const allPosts = getBlogPosts();
+  
+  const recentPosts = [...allPosts]
+    .sort((a, b) => {
+      const dateA = new Date(a.metadata.date);
+      const dateB = new Date(b.metadata.date);
+      return dateB.getTime() - dateA.getTime();
+    })
+    .slice(0, 3);
 
   return (
     <section>
@@ -27,16 +34,24 @@ export default function Page() {
             <div className="mt-4">
               <a 
                 href="/blog" 
-                className="text-neutral-800 dark:text-neutral-200 hover:underline"
+                className="flex items-center text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100"
               >
-                See all posts →
+                Read all posts
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  strokeWidth={1.5} 
+                  stroke="currentColor" 
+                  className="ml-1 h-4 w-4"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
               </a>
             </div>
           </>
         ) : (
-          <p className="text-neutral-600 dark:text-neutral-400">
-            No blog posts available.
-          </p>
+          <p className="text-neutral-600 dark:text-neutral-400">No posts found.</p>
         )}
       </div>
     </section>

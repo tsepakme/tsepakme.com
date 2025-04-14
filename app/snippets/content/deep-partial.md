@@ -1,7 +1,7 @@
 ---
 title: "OptionalMethods<T> Type"
 description: "A TypeScript utility type that makes all method properties optional while keeping data properties required"
-publishedAt: "2025-04-11"
+date: "2025-04-11"
 category: "typescript"
 difficulty: "intermediate"
 tags: ["utility-types", "conditional-types", "mapped-types", "key-remapping"]
@@ -63,7 +63,7 @@ type OptionalMethods<T> = {
 ```
 
 ### The type uses:
-- **Key remapping** with `'as'` to filter properties
+- **Key remapping** with `as` to filter properties
 - **Conditional types** to check if each property is a function
 - **Intersection** to combine both filtered property sets
 
@@ -177,7 +177,7 @@ const calc: OptionalMethods<Calculator> = {
 
 ## Comparison with Partial`<T>`
 
-Unlike `'Partial<T>'` which makes all properties optional, `'OptionalMethods<T>'` is more selective:
+Unlike `Partial<T>` which makes all properties optional, `OptionalMethods<T>` is more selective:
 
 ```ts
 interface Example {

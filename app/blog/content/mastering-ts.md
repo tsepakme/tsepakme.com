@@ -1,7 +1,9 @@
 ---
 title: "Mastering TypeScript: Best Practices for Scalable Code"
-publishedAt: "2025-02-18"
 description: "Learn essential TypeScript best practices to write cleaner, more maintainable, and scalable code."
+date: "2025-02-18"
+tags: ["typescript", "best-practices", "web-development"]
+published: true
 ---
 
 TypeScript has become the go-to language for building robust and scalable web applications. By adding static typing to JavaScript, it helps developers catch errors early and improve code maintainability.

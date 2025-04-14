@@ -1,7 +1,9 @@
 ---
 title: "Conditional Types and the Art of Type-Level Logic in TypeScript"
-publishedAt: "2025-04-09"
 description: "Take your TypeScript skills to the next level by mastering conditional types, `infer`, and advanced type-level computation."
+date: "2025-04-09"
+tags: ["typescript", "conditional-types", "advanced-types"]
+published: true
 ---
 
 TypeScript isn't just a superset of JavaScript—it's a language with its own type-level programming capabilities. One of the most powerful features in its arsenal is **conditional types**. These allow you to model complex relationships between types, perform inference, and create utility types that adapt to your codebase dynamically.

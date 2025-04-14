@@ -5,7 +5,7 @@ A modern, performance-optimized portfolio site with integrated blog and code sni
 ## Features
 
 ### Content & Presentation
-- **MDX and Markdown support** for rich content authoring
+- **Pure Markdown support** for clean content authoring without client components
 - **TypeScript code snippets collection** with syntax highlighting
 - **Dark/light mode** with system preference detection
 - **Mobile-responsive design** with Tailwind CSS
@@ -28,15 +28,16 @@ A modern, performance-optimized portfolio site with integrated blog and code sni
 ## Content Types
 
 ### Blog
-Write and publish articles in MDX format with:
+Write and publish articles in Markdown format with:
 - Frontmatter metadata for title, description, publish date
-- Optional tags and difficulty level support
+- Optional tags support
 - Nested heading structure with proper semantics
+- Code blocks with syntax highlighting
 
 ### Code Snippets
 Share reusable TypeScript utility types and patterns:
 - Categorized by difficulty and tags
-- Syntax highlighting with prism.js
+- Syntax highlighting with rehype-highlight
 - Copy-to-clipboard functionality
 - Detailed explanations and usage examples
 
@@ -58,34 +59,33 @@ npm start
 
 ## Content Management
 
-### Adding a Blog Post
+Adding a Blog Post
 
-Create a new `.mdx` file in `/app/blog/posts/` with frontmatter:
+Create a new `.md` file in `content` with frontmatter:
 
 ```ts
 ---
 title: "Your Post Title"
 description: "Brief description of your post"
-publishedAt: "YYYY-MM-DD"
+date: "YYYY-MM-DD"
 tags: ["tag1", "tag2"]
-difficulty: "beginner|intermediate|advanced"
 ---
 
 Content goes here...
 ```
 
-### Adding a Code Snippet
+Adding a Code Snippet
 
-Create a new `.mdx` file in `content` with frontmatter:
+Create a new `.md` file in `content` with frontmatter:
 
 ```ts
 ---
-title: "Utility Type Name"
-description: "What this type does"
-publishedAt: "YYYY-MM-DD"
-category: "typescript"
+title: "JavaScript Utility Name"
+description: "What this utility does"
+date: "YYYY-MM-DD"
+category: "javascript"
+tags: ["performance", "other-tags"]
 difficulty: "beginner|intermediate|advanced"
-tags: ["utility-types", "other-tags"]
 ---
 
 Content goes here...
@@ -101,4 +101,4 @@ Optimized for deployment on Vercel with:
 
 ## License
 
-### MIT
+MIT
