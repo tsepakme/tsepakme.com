@@ -1,4 +1,4 @@
-import { getBlogPosts } from 'app/blog/utils'
+import { getBlogPosts } from 'scripts/utils'
 
 export const baseUrl = 'https://tsepakme.com'
 

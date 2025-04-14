@@ -1,10 +1,12 @@
 ---
 title: "TypeScript on Go: A New Era for the Language"
-publishedAt: "2025-03-12"
 description: "Microsoft has announced the migration of TypeScript to Go. Let's explore what this means for developers."
+date: "2025-03-12"
+tags: ["typescript", "go"]
+published: true
 ---
 
-On March 11, it was <a href="https://devblogs.microsoft.com/typescript/typescript-native-port/" target="_blank" rel="noopener">announced</a> that TS is being rewritten in Go. The plan is to have a fully functional version with support for all features by the end of 2025.
+On March 11, it was [announced](https://devblogs.microsoft.com/typescript/typescript-native-port/) that TS is being rewritten in Go. The plan is to have a fully functional version with support for all features by the end of 2025.
 
 ## Performance Improvements
 
@@ -16,6 +18,6 @@ Currently, benchmarks already show a 10x performance improvement. Of course, not
 
 ## Additional Resources
 
-Here is a <a href="https://www.youtube.com/watch?v=10qowKUW82U&amp;ab_channel=MichiganTypeScript" target="_blank" rel="noopener">link</a> where TS lead and architect Anders Hejlsberg talks about porting TS to Go
+Here is a [link](https://www.youtube.com/watch?v=10qowKUW82U&ab_channel=MichiganTypeScript) where TS lead and architect Anders Hejlsberg talks about porting TS to Go
 
-Source <a href="https://github.com/microsoft/typescript-go" target="_blank" rel="noopener">Code</a>
+Source [Code](https://github.com/microsoft/typescript-go)

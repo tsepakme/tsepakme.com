@@ -1,7 +1,9 @@
 ---
 title: "The Rise of Edge Computing: What It Means for Web Developers"
-publishedAt: "2025-01-28"
 description: "Edge computing is changing web development by reducing latency and improving performance. Learn how it works and why it matters."
+date: "2025-01-28"
+tags: ["typescript", "edge-computing", "web-development"]
+published: true
 ---
 
 Edge computing is revolutionizing the way web applications handle performance, security, and latency. Instead of relying solely on centralized cloud servers, edge computing processes data closer to the user, resulting in faster and more efficient experiences.

@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { getSnippetsByTag, getAllTags } from '../../lib/markdown';
-import { SnippetCard } from '../../components/snippet-card';
+import { getSnippetsByTag, getAllTags } from 'app/snippets/lib/markdown';
+import { SnippetCard } from 'app/snippets/components/snippet-card';
 import { notFound } from 'next/navigation';
 
 export async function generateStaticParams() {

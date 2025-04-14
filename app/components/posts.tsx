@@ -4,8 +4,8 @@ export function BlogPosts({ posts }) {
       {(posts || [])
         .filter(post => post && post.slug)
         .sort((a, b) => {
-          const dateA = a.metadata?.publishedAt ? new Date(a.metadata.publishedAt) : new Date(0);
-          const dateB = b.metadata?.publishedAt ? new Date(b.metadata.publishedAt) : new Date(0);
+          const dateA = a.metadata?.date ? new Date(a.metadata.date) : new Date(0);
+          const dateB = b.metadata?.date ? new Date(b.metadata.date) : new Date(0);
           
           return dateB.getTime() - dateA.getTime();
         })
@@ -18,12 +18,12 @@ export function BlogPosts({ posts }) {
               >
                 {post.metadata?.title || 'Untitled Post'}
               </a>
-              {post.metadata?.publishedAt && (
+              {post.metadata?.date && (
                 <time
-                  dateTime={post.metadata.publishedAt}
+                  dateTime={post.metadata.date}
                   className="text-neutral-600 dark:text-neutral-400 text-sm sm:text-base tabular-nums"
                 >
-                  {new Date(post.metadata.publishedAt).toLocaleDateString('en-US', {
+                  {new Date(post.metadata.date).toLocaleDateString('en-US', {
                     month: 'long',
                     day: 'numeric',
                     year: 'numeric',

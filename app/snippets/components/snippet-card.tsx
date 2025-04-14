@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Tag from './tag';
+import Tag from 'app/components/tag';
 
 export function SnippetCard({ snippet }) {
   const meta = snippet.metadata || snippet.meta;
@@ -34,7 +34,7 @@ export function SnippetCard({ snippet }) {
 
         <div className="flex flex-wrap gap-1">
           {meta.tags?.map(tag => (
-            <Tag tag={tag} key={tag} />
+            <Tag tag={tag} key={tag} slug='snippets'/>
           ))}
         </div>
 

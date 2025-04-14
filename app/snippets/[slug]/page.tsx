@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getSnippetBySlug, getAllSnippetSlugs } from '../lib/markdown';
-import { MarkdownView } from '../components/markdown-view';
-import Tag from '../components/tag';
+import { getSnippetBySlug, getAllSnippetSlugs } from 'app/snippets/lib/markdown';
+import { MarkdownView } from 'app/snippets/components/markdown-view';
+import Tag from 'app/components/tag';
 
 export async function generateStaticParams() {
   const slugs = await getAllSnippetSlugs();
@@ -63,7 +63,7 @@ export default async function SnippetPage({ params }: { params: { slug: string }
       {snippet.meta.tags && snippet.meta.tags.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-8">
           {snippet.meta.tags.map(tag => (
-            <Tag tag={tag} key={tag} />
+            <Tag tag={tag} key={tag} slug='snippets' />
           ))}
         </div>
       )}
