@@ -65,13 +65,13 @@ type Optional<T> = {
 };
 ```
 
-## Why `'Record<string, unknown>'` instead of `'object'`
+## Why `Record<string, unknown>` instead of `object`
 
-Using `'Record<string, unknown>'` instead of `'object'` provides more precise type checking:
+Using `Record<string, unknown>` instead of `object` provides more precise type checking:
 
 - **More specific object detection:**
-  - `'object'` includes arrays, functions, and other non-primitive types
-  - `'Record<string, unknown>'` specifically targets plain objects with string keys
+  - `object` includes arrays, functions, and other non-primitive types
+  - `Record<string, unknown>` specifically targets plain objects with string keys
 - **Better handling of special types:**
   - Arrays remain intact instead of being recursively processed
   - Function properties are preserved as-is
@@ -170,9 +170,9 @@ const update: DeepOptional<TodoList> = {
 };
 ```
 
-## Comparison to Standard `'Partial<T>'`
+## Comparison to Standard `Partial<T>`
 
-TypeScript's built-in `'Partial<T>'` only makes the top level properties optional:
+TypeScript's built-in `Partial<T>` only makes the top level properties optional:
 
 ```ts
 // Built-in TypeScript utility

@@ -1,7 +1,9 @@
 ---
 title: "Goodbye styled-components: The End of an Era"
-publishedAt: "2025-04-06"
 description: "Styled-components is now in maintenance mode. Here's what that means for the future of styling in React and what alternatives you should consider."
+date: "2025-04-06"
+tags: ["styled-components", "css-in-js", "react"]
+published: true
 ---
 
 For years, [**styled-components**](https://styled-components.com/) helped redefine how developers think about styling in React applications. It popularized CSS-in-JS, offering dynamic styling, scoped components, and a sleek developer experience. But as of 2025, the library has officially entered **maintenance mode**—a major signal that the frontend ecosystem is evolving.

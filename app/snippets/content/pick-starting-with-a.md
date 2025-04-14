@@ -7,7 +7,7 @@ difficulty: "intermediate"
 tags: ["utility-types", "template-literals", "key-remapping", "mapped-types"]
 ---
 
-A TypeScript utility type that selects all properties from a type whose keys begin with the letter `'a'`. This pattern is especially useful when working with naming conventions, prefixed field names, or APIs with structured key formats.
+A TypeScript utility type that selects all properties from a type whose keys begin with the letter `a`. This pattern is especially useful when working with naming conventions, prefixed field names, or APIs with structured key formats.
 
 ## Snippet
 
@@ -57,10 +57,10 @@ type PickStartingWithA<T> = {
 
 ## This type uses:
 
-Using `'Record<string, unknown>'` instead of `'object'` provides more precise type checking:
+Using `Record<string, unknown>` instead of `object` provides more precise type checking:
 
 - **Template literal types** to check if a key starts with a specific pattern
-- **Conditional key remapping** `'as'` to exclude unwanted keys
+- **Conditional key remapping** `as` to exclude unwanted keys
 - **Mapped types** to transform the type while keeping values intact
 
 ## Real World Example

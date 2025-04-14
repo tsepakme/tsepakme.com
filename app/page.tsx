@@ -1,5 +1,6 @@
 import { BlogPosts } from "app/components/posts";
-import { getBlogPosts } from "app/blog/utils";
+import { getBlogPosts } from "scripts/utils";
+// import { getAllPosts } from "app/blog/lib/markdown";
 
 export default function Page() {
   const posts = getBlogPosts();

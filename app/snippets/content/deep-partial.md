@@ -63,7 +63,7 @@ type OptionalMethods<T> = {
 ```
 
 ### The type uses:
-- **Key remapping** with `'as'` to filter properties
+- **Key remapping** with `as` to filter properties
 - **Conditional types** to check if each property is a function
 - **Intersection** to combine both filtered property sets
 
@@ -177,7 +177,7 @@ const calc: OptionalMethods<Calculator> = {
 
 ## Comparison with Partial`<T>`
 
-Unlike `'Partial<T>'` which makes all properties optional, `'OptionalMethods<T>'` is more selective:
+Unlike `Partial<T>` which makes all properties optional, `OptionalMethods<T>` is more selective:
 
 ```ts
 interface Example {
