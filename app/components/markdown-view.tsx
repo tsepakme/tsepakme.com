@@ -6,9 +6,10 @@ import 'highlight.js/styles/github-dark.css';
 
 interface MarkdownViewProps {
   html: string;
+  className?: string;
 }
 
-export function MarkdownView({ html }: MarkdownViewProps) {
+export function MarkdownView({ html, className = "prose prose-neutral dark:prose-invert max-w-none" }: MarkdownViewProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
@@ -51,7 +52,7 @@ export function MarkdownView({ html }: MarkdownViewProps) {
   return (
     <div 
       ref={contentRef}
-      className="markdown"
+      className={`markdown ${className}`}
     >
       {parse(html)}
     </div>

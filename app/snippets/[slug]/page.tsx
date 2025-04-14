@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getSnippetBySlug, getAllSnippetSlugs } from 'app/snippets/lib/markdown';
-import { MarkdownView } from 'app/snippets/components/markdown-view';
+import { MarkdownView } from 'app/components/markdown-view';
 import Tag from 'app/components/tag';
 
 export async function generateStaticParams() {

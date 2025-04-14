@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getPostBySlug, getAllPostSlugs } from 'app/blog/lib/markdown';
-import { MarkdownView } from 'app/blog/components/markdown-view';
+import { MarkdownView } from 'app/components/markdown-view';
 import Tag from 'app/components/tag';
 
 export async function generateStaticParams() {
