@@ -1,7 +1,7 @@
 ---
 title: "Optional<T> Recursive Type"
 description: "A TypeScript utility type that makes all properties optional, including nested objects"
-publishedAt: "2025-04-11"
+date: "2025-04-11"
 category: "typescript"
 difficulty: "intermediate"
 tags: ["utility-types", "type-transformations", "mapped-types"]

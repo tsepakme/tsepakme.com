@@ -1,7 +1,7 @@
 ---
 title: "OptionalMethods<T> Type"
 description: "A TypeScript utility type that makes all method properties optional while keeping data properties required"
-publishedAt: "2025-04-11"
+date: "2025-04-11"
 category: "typescript"
 difficulty: "intermediate"
 tags: ["utility-types", "conditional-types", "mapped-types", "key-remapping"]

@@ -1,7 +1,7 @@
 ---
 title: "PickStartingWithA<T> Type"
 description: "A TypeScript utility type that selects all properties whose keys start with the letter 'a'"
-publishedAt: "2025-04-11"
+date: "2025-04-11"
 category: "typescript"
 difficulty: "intermediate"
 tags: ["utility-types", "template-literals", "key-remapping", "mapped-types"]
