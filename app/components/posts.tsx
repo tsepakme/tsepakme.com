@@ -11,8 +11,13 @@ export function BlogPosts({ posts }) {
 
           return dateB.getTime() - dateA.getTime();
         })
-        .map((post) => (
-          <div key={post.slug} className="flex flex-col gap-2">
+        .map((post, index, array) => (
+          <div 
+            key={post.slug} 
+            className={`flex flex-col gap-2 pb-4 ${
+              index < array.length - 1 ? 'border-b border-neutral-200 dark:border-neutral-700 mb-3' : ''
+            }`}
+          >
             <div className="flex flex-col sm:flex-row justify-between gap-2">
               <a
                 href={`/blog/${post.slug}`}

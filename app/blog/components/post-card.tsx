@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Post } from 'app/blog/lib/markdown';
 import { formatDate, getReadingTime } from 'scripts/utils';
+import Tag from 'app/components/tag';
 
 export function PostCard({ post }: { post: Post }) {
   return (
@@ -32,13 +33,7 @@ export function PostCard({ post }: { post: Post }) {
         {post.meta.tags && post.meta.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-2">
             {post.meta.tags.map(tag => (
-              <Link
-                key={tag}
-                href={`/blog/tag/${tag}`}
-                className="text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 text-sm"
-              >
-                #{tag}
-              </Link>
+              <Tag tag={tag} key={tag} slug="blog" />
             ))}
           </div>
         )}
