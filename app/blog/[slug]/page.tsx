@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getPostBySlug, getAllPostSlugs } from 'app/blog/lib/markdown';
 import { MarkdownView } from 'app/components/markdown-view';
 import Tag from 'app/components/tag';
+import { formatDate, getReadingTime } from 'scripts/utils';
 
 export async function generateStaticParams() {
   const slugs = await getAllPostSlugs();
@@ -51,11 +52,7 @@ export default async function PostPage({ params }) {
             dateTime={post.meta.date}
             className="text-neutral-600 dark:text-neutral-400"
           >
-            {new Date(post.meta.date).toLocaleDateString("en-GB", {
-              year: 'numeric',
-              month: 'long',
-              day: '2-digit',
-            })}
+            {formatDate(post.meta.date, false)}
           </time>
           <span className="text-neutral-500 dark:text-neutral-500">•</span>
           <span className="text-neutral-600 dark:text-neutral-400">
@@ -75,10 +72,4 @@ export default async function PostPage({ params }) {
       )}
     </article>
   );
-}
-
-function getReadingTime(text: string): number {
-  const wordsPerMinute = 200;
-  const words = text.split(/\s+/).length;
-  return Math.ceil(words / wordsPerMinute);
 }

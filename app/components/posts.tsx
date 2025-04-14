@@ -1,3 +1,5 @@
+import { formatDate } from 'scripts/utils';
+
 export function BlogPosts({ posts }) {
   return (
     <div className="flex flex-col gap-4">
@@ -6,7 +8,7 @@ export function BlogPosts({ posts }) {
         .sort((a, b) => {
           const dateA = a.metadata?.date ? new Date(a.metadata.date) : new Date(0);
           const dateB = b.metadata?.date ? new Date(b.metadata.date) : new Date(0);
-          
+
           return dateB.getTime() - dateA.getTime();
         })
         .map((post) => (
@@ -23,11 +25,7 @@ export function BlogPosts({ posts }) {
                   dateTime={post.metadata.date}
                   className="text-neutral-600 dark:text-neutral-400 text-sm sm:text-base tabular-nums"
                 >
-                  {new Date(post.metadata.date).toLocaleDateString('en-US', {
-                    month: 'long',
-                    day: 'numeric',
-                    year: 'numeric',
-                  })}
+                  {formatDate(post.metadata.date, false)}
                 </time>
               )}
             </div>
