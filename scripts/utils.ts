@@ -37,7 +37,10 @@ export function getBlogPosts() {
         };
       });
     
-    return posts;
+    return posts.sort((a, b) => {
+      return new Date(b.metadata.date).getTime() - new Date(a.metadata.date).getTime();
+    });
+    
   } catch (error) {
     console.error("Error getting blog posts:", error);
     return [];
@@ -72,7 +75,7 @@ export async function getBlogPost(slug) {
   }
 }
 
-export function formatDate(date: string, includeRelative = false) {
+export function formatDate(date: string, includeRelative: boolean) {
   let currentDate = new Date();
   if (!date.includes('T')) {
     date = `${date}T00:00:00`;
@@ -95,10 +98,10 @@ export function formatDate(date: string, includeRelative = false) {
     formattedDate = 'Today';
   }
 
-  let fullDate = targetDate.toLocaleString('en-us', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
+  let fullDate = targetDate.toLocaleString("en-GB", {
+    year: "numeric",
+    month: "long",
+    day: "2-digit",
   });
 
   if (!includeRelative) {
@@ -106,4 +109,10 @@ export function formatDate(date: string, includeRelative = false) {
   }
 
   return `${fullDate} (${formattedDate})`;
+}
+
+export function getReadingTime(text: string): number {
+  const wordsPerMinute = 200;
+  const words = text.split(/\s+/).length;
+  return Math.ceil(words / wordsPerMinute);
 }
