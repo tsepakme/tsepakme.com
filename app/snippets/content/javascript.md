@@ -5,7 +5,6 @@ date: "2023-03-15"
 category: "javascript"
 tags: ["arrays", "methods", "es6"]
 difficulty: "intermediate"
-author: "John Doe"
 ---
 
 # JavaScript Array Methods Every Developer Should Know

@@ -1,14 +1,27 @@
-import { TagSnippets } from "app/components/tag-snippets";
-import Link from "next/link";
+import Link from 'next/link';
+import { getSnippetsByTag, getAllTags } from '../../lib/markdown';
+import { SnippetCard } from '../../components/snippet-card';
+import { notFound } from 'next/navigation';
 
-export function generateMetadata({ params }: { params: { tag: string } }) {
+export async function generateStaticParams() {
+  const tags = await getAllTags();
+  return tags.map(tag => ({ tag }));
+}
+
+export async function generateMetadata({ params }) {
   return {
     title: `#${params.tag} Snippets`,
-    description: `Code snippets tagged with ${params.tag}`,
+    description: `Code snippets tagged with #${params.tag}`,
   };
 }
 
-export default function TagPage({ params }: { params: { tag: string } }) {
+export default async function TagPage({ params }: { params: { tag: string } }) {
+  const snippets = await getSnippetsByTag(params.tag);
+  
+  if (!snippets.length) {
+    notFound();
+  }
+  
   return (
     <section>
       <div className="flex items-center gap-2 mb-8">
@@ -21,10 +34,21 @@ export default function TagPage({ params }: { params: { tag: string } }) {
         <span className="text-neutral-300 dark:text-neutral-700">/</span>
         <span className="text-neutral-500">Tags</span>
         <span className="text-neutral-300 dark:text-neutral-700">/</span>
-        <span className="font-medium">{params.tag}</span>
+        <span className="font-medium">#{params.tag}</span>
       </div>
       
-      <TagSnippets tag={params.tag} />
+      <h1 className="font-semibold text-2xl mb-8 tracking-tighter">
+        #{params.tag}
+      </h1>
+      
+      <div className="grid gap-4 grid-cols-1">
+        {snippets.map(snippet => (
+          <SnippetCard 
+            key={snippet.slug} 
+            snippet={snippet} 
+          />
+        ))}
+      </div>
     </section>
   );
 }

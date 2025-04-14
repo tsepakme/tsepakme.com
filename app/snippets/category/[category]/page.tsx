@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { getSnippetsByCategory, getAllCategories } from 'app/snippets-test/lib/markdown';
-import { SnippetCard } from 'app/snippets-test/components/snippet-card';
+import { getSnippetsByCategory, getAllCategories } from 'app/snippets/lib/markdown';
+import { SnippetCard } from 'app/snippets/components/snippet-card';
 import { notFound } from 'next/navigation';
 
 export async function generateStaticParams() {
@@ -26,7 +26,7 @@ export default async function CategoryPage({ params }) {
     <section>
       <div className="flex items-center gap-2 mb-8">
         <Link
-          href="/snippets-test"
+          href="/snippets"
           className="text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
         >
           Snippets

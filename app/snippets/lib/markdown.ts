@@ -8,7 +8,7 @@ import rehypeStringify from 'rehype-stringify';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 
-const SNIPPETS_DIR = path.join(process.cwd(), 'app/snippets-test/content');
+const SNIPPETS_DIR = path.join(process.cwd(), 'app/snippets/content');
 
 export interface SnippetMeta {
   title: string;
@@ -16,7 +16,6 @@ export interface SnippetMeta {
   date: string;
   category: string;
   tags: string[];
-  author?: string;
   difficulty?: 'beginner' | 'intermediate' | 'advanced';
 }
 
@@ -38,7 +37,7 @@ export async function getAllSnippets(): Promise<Snippet[]> {
     })
   );
   
-  return snippets.filter(Boolean).sort((a, b) => {
+  return snippets.filter((snippet): snippet is Snippet => snippet !== null).sort((a, b) => {
     return new Date(b.meta.date).getTime() - new Date(a.meta.date).getTime();
   });
 }
@@ -64,7 +63,6 @@ export async function getSnippetBySlug(slug: string): Promise<Snippet | null> {
       date: data.date,
       category: data.category || 'uncategorized',
       tags: data.tags || [],
-      author: data.author,
       difficulty: data.difficulty
     },
     content,
@@ -77,7 +75,7 @@ async function markdownToHtml(markdown: string): Promise<string> {
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkRehype)
-    .use(rehypeHighlight, { detect: true, ignoreMissing: true })
+    .use(rehypeHighlight, { detect: true, ignoreMissing: true } as any)
     .use(rehypeStringify)
     .process(markdown);
   
@@ -87,13 +85,13 @@ async function markdownToHtml(markdown: string): Promise<string> {
 export async function getAllCategories(): Promise<string[]> {
   const snippets = await getAllSnippets();
   const categories = snippets.map(snippet => snippet.meta.category);
-  return [...new Set(categories)];
+  return Array.from(new Set(categories));
 }
 
 export async function getAllTags(): Promise<string[]> {
   const snippets = await getAllSnippets();
   const tags = snippets.flatMap(snippet => snippet.meta.tags);
-  return [...new Set(tags)];
+  return Array.from(new Set(tags));
 }
 
 export async function getSnippetsByCategory(category: string): Promise<Snippet[]> {

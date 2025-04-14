@@ -1,28 +1,16 @@
-import { getSnippet, getAllSnippetSlugs } from '../utils';
-import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { TagLink } from 'app/components/tag-link';
-import { MDXRemote } from 'next-mdx-remote/rsc';
-
-const components = {
-  a: ({ href, ...props }) => {
-    if (href.startsWith('/')) {
-      return <Link href={href} {...props} />;
-    }
-    if (href.startsWith('#')) {
-      return <a {...props} />;
-    }
-    return <a target="_blank" rel="noopener noreferrer" {...props} />;
-  },
-};
+import { notFound } from 'next/navigation';
+import { getSnippetBySlug, getAllSnippetSlugs } from '../lib/markdown';
+import { MarkdownView } from '../components/markdown-view';
+import Tag from '../components/tag';
 
 export async function generateStaticParams() {
-  const slugs = getAllSnippetSlugs();
+  const slugs = await getAllSnippetSlugs();
   return slugs.map(slug => ({ slug }));
 }
 
 export async function generateMetadata({ params }) {
-  const snippet = await getSnippet(params.slug);
+  const snippet = await getSnippetBySlug(params.slug);
   
   if (!snippet) {
     return {
@@ -30,19 +18,17 @@ export async function generateMetadata({ params }) {
       description: 'The requested snippet could not be found'
     };
   }
-  
+
   return {
-    title: snippet.metadata.title,
-    description: snippet.metadata.description
+    title: snippet.meta.title,
+    description: snippet.meta.description,
   };
 }
 
-export default async function SnippetPage({ params }) {
-  
-  const snippet = await getSnippet(params.slug);
+export default async function SnippetPage({ params }: { params: { slug: string } }) {
+  const snippet = await getSnippetBySlug(params.slug);
   
   if (!snippet) {
-    console.error('Snippet not found, redirecting to 404');
     notFound();
   }
   
@@ -55,34 +41,45 @@ export default async function SnippetPage({ params }) {
         >
           ← Back to snippets
         </Link>
-        <h1 className="font-semibold text-2xl tracking-tighter mt-2">{snippet.metadata.title}</h1>
-        <p className="text-neutral-600 dark:text-neutral-400">{snippet.metadata.description}</p>
+        <h1 className="font-semibold text-2xl tracking-tighter mt-2">{snippet.meta.title}</h1>
+        <p className="text-neutral-600 dark:text-neutral-400">{snippet.meta.description}</p>
         
         <div className="flex items-center gap-2 mt-4">
           <div className="rounded-full px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 text-xs">
-            {snippet.metadata.category}
+            {snippet.meta.category}
           </div>
-          {snippet.metadata.difficulty && (
-            <div className="rounded-full px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 text-xs capitalize">
-              {snippet.metadata.difficulty}
+          {snippet.meta.difficulty && (
+            <div className={`rounded-full px-2 py-0.5 text-xs capitalize ${getDifficultyColor(snippet.meta.difficulty)}`}>
+              {snippet.meta.difficulty}
             </div>
           )}
         </div>
       </div>
       
       <div className="prose prose-neutral dark:prose-invert max-w-none">
-        <MDXRemote source={snippet.content} components={components} />
+        <MarkdownView html={snippet.html} />
       </div>
       
-      {snippet.metadata.tags && snippet.metadata.tags.length > 0 && (
+      {snippet.meta.tags && snippet.meta.tags.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-8">
-          {snippet.metadata.tags.map(tag => (
-            <TagLink key={tag} tag={tag}>
-              #{tag}
-            </TagLink>
+          {snippet.meta.tags.map(tag => (
+            <Tag tag={tag} key={tag} />
           ))}
         </div>
       )}
     </section>
   );
+}
+
+function getDifficultyColor(difficulty: string): string {
+  switch (difficulty) {
+    case 'beginner':
+      return "bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400";
+    case 'intermediate':
+      return "bg-yellow-50 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400";
+    case 'advanced':
+      return "bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400";
+    default:
+      return "bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400";
+  }
 }
