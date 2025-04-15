@@ -14,9 +14,9 @@ export default function ResumePage() {
         <h2>Experience</h2>
         <h3>
           <span>Front End Developer - </span>
-          <Link href="https://www.hirschtec.eu/" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.hirschtec.eu/" target="_blank" rel="noopener noreferrer">
             Hirschtec GmbH & Co. KG
-          </Link>
+          </a>
         </h3>
         <p className="text-sm text-neutral-600 dark:text-neutral-400">Mar 2023 - Present (+2 years)</p>
         <ul>
@@ -30,9 +30,9 @@ export default function ResumePage() {
 
         <h3>
           <span>Front End Developer - </span>
-          <Link href="https://timeweb.ru/" target="_blank" rel="noopener noreferrer">
+          <a href="https://timeweb.ru/" target="_blank" rel="noopener noreferrer">
             Timeweb
-          </Link>
+          </a>
         </h3>
         <p className="text-sm text-neutral-600 dark:text-neutral-400">Feb 2023 - Apr 2023 (3 months)</p>
         <ul>
@@ -46,9 +46,9 @@ export default function ResumePage() {
 
         <h3>
           <span>Front End Developer - </span>
-          <Link href="https://ati.su/" target="_blank" rel="noopener noreferrer">
+          <a href="https://ati.su/" target="_blank" rel="noopener noreferrer">
             ATI.SU
-          </Link>
+          </a>
         </h3>
         <p className="text-sm text-neutral-600 dark:text-neutral-400">Mar 2022 - Feb 2023 (1 year)</p>
         <ul>
@@ -95,17 +95,17 @@ export default function ResumePage() {
         <h2>Education</h2>
         <h3>
           <span>Master of Engineering - </span>
-          <Link href="https://www.sibstrin.ru/" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.sibstrin.ru/" target="_blank" rel="noopener noreferrer">
             Novosibirsk State University of Architecture and Civil Engeering
-          </Link>
+          </a>
         </h3>
         <p className="text-sm text-neutral-600 dark:text-neutral-400">Jul 2009 - 2014</p>
         <p>Master of Engeering</p>
 
         <h2>Licenses & Certifications</h2>
-        <Link href="https://www.efset.org/cert/EW2iu3" target="_blank" rel="noopener noreferrer">
+        <a href="https://www.efset.org/cert/EW2iu3" target="_blank" rel="noopener noreferrer">
           Test of English as a Foreign Language - EF Standard English Test (EF SET)
-        </Link>
+        </a>
 
       </div>
       <div className="mt-8">

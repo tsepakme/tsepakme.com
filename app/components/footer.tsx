@@ -33,7 +33,7 @@ export default function Footer() {
           </Link>
         </li>
         <li>
-          <Link
+          <a
             className="flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100"
             rel="noopener noreferrer"
             target="_blank"
@@ -41,10 +41,10 @@ export default function Footer() {
           >
             <ArrowIcon />
             <p className="ml-2 h-7">github</p>
-          </Link>
+          </a>
         </li>
         <li>
-          <Link
+          <a
             className="flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100"
             rel="noopener noreferrer"
             target="_blank"
@@ -52,10 +52,10 @@ export default function Footer() {
           >
             <ArrowIcon />
             <p className="ml-2 h-7">linkedin</p>
-          </Link>
+          </a>
         </li>
         <li>
-          <Link
+          <a
             className="flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100"
             rel="noopener noreferrer"
             target="_blank"
@@ -63,10 +63,10 @@ export default function Footer() {
           >
             <ArrowIcon />
             <p className="ml-2 h-7">telegram</p>
-          </Link>
+          </a>
         </li>
         <li>
-          <Link
+          <a
             className="flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100"
             rel="noopener noreferrer"
             target="_blank"
@@ -74,7 +74,7 @@ export default function Footer() {
           >
             <ArrowIcon />
             <p className="ml-2 h-7">mail</p>
-          </Link>
+          </a>
         </li>
       </ul>
       <p className="mt-8 text-neutral-600 dark:text-neutral-300">
