@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export const metadata = {
   title: "Resume",
   description: "My professional experience and skills.",
@@ -107,13 +109,13 @@ export default function ResumePage() {
 
       </div>
       <div className="mt-8">
-        <a
+        <Link
           href="/Aiusha_Mikhailov-Resume.pdf"
           className="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
           download
         >
           Download PDF
-        </a>
+        </Link>
       </div>
     </section >
   );

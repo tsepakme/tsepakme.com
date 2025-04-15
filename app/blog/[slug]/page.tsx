@@ -1,16 +1,21 @@
 import { notFound } from 'next/navigation';
+import { Metadata } from 'next';
 import Link from 'next/link';
 import { getPostBySlug, getAllPostSlugs } from 'app/blog/lib/markdown';
 import { MarkdownView } from 'app/components/markdown-view';
 import Tag from 'app/components/tag';
 import { formatDate, getReadingTime } from 'scripts/utils';
 
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<{ slug: string }[]> {
   const slugs = await getAllPostSlugs();
   return slugs.map(slug => ({ slug }));
 }
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata({ 
+  params 
+}: { 
+  params: { slug: string } 
+}): Promise<Metadata> {
   const post = await getPostBySlug(params.slug);
 
   if (!post) {
@@ -26,7 +31,7 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function PostPage({ params }) {
+export default async function PostPage({ params }: { params: { slug: string } }) {
   const post = await getPostBySlug(params.slug);
 
   if (!post) {

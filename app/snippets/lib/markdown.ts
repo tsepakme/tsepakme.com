@@ -1,86 +1,52 @@
-import fs from 'fs';
 import path from 'path';
-import matter from 'gray-matter';
-import { unified } from 'unified';
-import remarkParse from 'remark-parse';
-import remarkRehype from 'remark-rehype';
-import rehypeStringify from 'rehype-stringify';
-import remarkGfm from 'remark-gfm';
-import rehypeHighlight from 'rehype-highlight';
+import { createMarkdownManager, BaseMeta, BaseContent } from 'lib/markdown-factory';
 
 const SNIPPETS_DIR = path.join(process.cwd(), 'app/snippets/content');
 
-export interface SnippetMeta {
-  title: string;
-  description: string;
-  date: string;
+export interface SnippetMeta extends BaseMeta {
   category: string;
-  tags: string[];
   difficulty?: 'beginner' | 'intermediate' | 'advanced';
 }
 
-export interface Snippet {
-  slug: string;
-  meta: SnippetMeta;
-  content: string;
-  html: string;
-}
+export interface Snippet extends BaseContent<SnippetMeta> {}
 
-export async function getAllSnippets(): Promise<Snippet[]> {
-  const files = fs.readdirSync(SNIPPETS_DIR);
-  const mdFiles = files.filter(file => file.endsWith('.md'));
-  
-  const snippets = await Promise.all(
-    mdFiles.map(async file => {
-      const slug = file.replace(/\.md$/, '');
-      return await getSnippetBySlug(slug);
-    })
-  );
-  
-  return snippets.filter((snippet): snippet is Snippet => snippet !== null).sort((a, b) => {
-    return new Date(b.meta.date).getTime() - new Date(a.meta.date).getTime();
-  });
-}
+type SnippetMetaInput = {
+  title?: string;
+  description?: string;
+  date?: string;
+  category?: string;
+  tags?: string[];
+  difficulty?: 'beginner' | 'intermediate' | 'advanced';
+  published?: boolean;
+};
 
-export async function getSnippetBySlug(slug: string): Promise<Snippet | null> {
-  const filePath = path.join(SNIPPETS_DIR, `${slug}.md`);
-  
-  if (!fs.existsSync(filePath)) {
-    return null;
-  }
-  
-  const fileContent = fs.readFileSync(filePath, 'utf-8');
-  
-  const { data, content } = matter(fileContent);
-  
-  const html = await markdownToHtml(content);
-  
+function createSnippetMeta(data: SnippetMetaInput): SnippetMeta {
   return {
-    slug,
-    meta: {
-      title: data.title,
-      description: data.description || '',
-      date: data.date,
-      category: data.category || 'uncategorized',
-      tags: data.tags || [],
-      difficulty: data.difficulty
-    },
-    content,
-    html
+    title: data.title || 'Untitled',
+    description: data.description || '',
+    date: data.date || new Date().toISOString().split('T')[0],
+    category: data.category || 'uncategorized',
+    tags: data.tags || [],
+    difficulty: data.difficulty,
+    published: data.published !== false
   };
 }
 
-async function markdownToHtml(markdown: string): Promise<string> {
-  const result = await unified()
-    .use(remarkParse)
-    .use(remarkGfm)
-    .use(remarkRehype)
-    .use(rehypeHighlight, { detect: true, ignoreMissing: true } as any)
-    .use(rehypeStringify)
-    .process(markdown);
-  
-  return result.toString();
+function createSnippet(slug: string, meta: SnippetMeta, content: string, html: string): Snippet {
+  return { slug, meta, content, html };
 }
+
+const snippetsManager = createMarkdownManager<SnippetMeta, Snippet>(
+  SNIPPETS_DIR, 
+  createSnippetMeta, 
+  createSnippet
+);
+
+export const getAllSnippets = snippetsManager.getAllItems;
+export const getSnippetBySlug = snippetsManager.getItemBySlug;
+export const getAllTags = snippetsManager.getAllTags;
+export const getSnippetsByTag = snippetsManager.getItemsByTag;
+export const getAllSnippetSlugs = snippetsManager.getAllSlugs;
 
 export async function getAllCategories(): Promise<string[]> {
   const snippets = await getAllSnippets();
@@ -88,25 +54,7 @@ export async function getAllCategories(): Promise<string[]> {
   return Array.from(new Set(categories));
 }
 
-export async function getAllTags(): Promise<string[]> {
-  const snippets = await getAllSnippets();
-  const tags = snippets.flatMap(snippet => snippet.meta.tags);
-  return Array.from(new Set(tags));
-}
-
 export async function getSnippetsByCategory(category: string): Promise<Snippet[]> {
   const snippets = await getAllSnippets();
   return snippets.filter(snippet => snippet.meta.category === category);
-}
-
-export async function getSnippetsByTag(tag: string): Promise<Snippet[]> {
-  const snippets = await getAllSnippets();
-  return snippets.filter(snippet => snippet.meta.tags.includes(tag));
-}
-
-export async function getAllSnippetSlugs(): Promise<string[]> {
-  const files = fs.readdirSync(SNIPPETS_DIR);
-  return files
-    .filter(file => file.endsWith('.md'))
-    .map(file => file.replace(/\.md$/, ''));
 }

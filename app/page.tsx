@@ -1,10 +1,11 @@
+import { BlogPost, getBlogPosts } from "scripts/utils";
 import { BlogPosts } from "app/components/posts";
-import { getBlogPosts } from "scripts/utils";
+import Link from "next/link";
 
 export default function Page() {
-  const allPosts = getBlogPosts();
+  const allPosts: BlogPost[] = getBlogPosts();
   
-  const recentPosts = [...allPosts]
+  const recentPosts: BlogPost[] = [...allPosts]
     .sort((a, b) => {
       const dateA = new Date(a.metadata.date);
       const dateB = new Date(b.metadata.date);
@@ -32,7 +33,7 @@ export default function Page() {
           <>
             <BlogPosts posts={recentPosts} />
             <div className="mt-4">
-              <a 
+              <Link 
                 href="/blog" 
                 className="flex items-center text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100"
               >
@@ -47,7 +48,7 @@ export default function Page() {
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
-              </a>
+              </Link>
             </div>
           </>
         ) : (

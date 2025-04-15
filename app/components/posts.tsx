@@ -1,6 +1,13 @@
-import { formatDate } from 'scripts/utils';
+import { formatDate } from "scripts/utils";
+import Link from "next/link";
+import { BlogPost } from "scripts/utils";
 
-export function BlogPosts({ posts }) {
+// Определяем тип для пропсов компонента
+interface BlogPostsProps {
+  posts: BlogPost[];
+}
+
+export function BlogPosts({ posts }: BlogPostsProps) {
   return (
     <div className="flex flex-col gap-4">
       {(posts || [])
@@ -15,16 +22,16 @@ export function BlogPosts({ posts }) {
           <div 
             key={post.slug} 
             className={`flex flex-col gap-2 pb-4 ${
-              index < array.length - 1 ? 'border-b border-neutral-200 dark:border-neutral-700 mb-3' : ''
+              index < array.length - 1 ? 'border-b border-neutral-100 dark:border-neutral-800 mb-4' : ''
             }`}
           >
             <div className="flex flex-col sm:flex-row justify-between gap-2">
-              <a
+              <Link
                 href={`/blog/${post.slug}`}
                 className="text-neutral-900 dark:text-neutral-100 text-base sm:text-lg font-medium underline-offset-4 hover:underline"
               >
                 {post.metadata?.title || 'Untitled Post'}
-              </a>
+              </Link>
               {post.metadata?.date && (
                 <time
                   dateTime={post.metadata.date}

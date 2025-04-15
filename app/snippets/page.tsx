@@ -22,7 +22,7 @@ export default async function SnippetstPage() {
         {categories.map((category) => {
           const categorySnippets = snippets.filter(snippet => snippet.meta.category === category);
           return (
-            <a
+            <Link
               key={category}
               href={`/snippets/category/${category}`}
               className="border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
@@ -36,7 +36,7 @@ export default async function SnippetstPage() {
               <p className="text-neutral-600 dark:text-neutral-400 text-sm mt-1">
                 {getCategoryDescription(category)}
               </p>
-            </a>
+            </Link>
           );
         })}
       </div>
@@ -45,16 +45,14 @@ export default async function SnippetstPage() {
 }
 
 function getCategoryDescription(category: string): string {
-  switch (category.toLowerCase()) {
+  switch(category) {
     case 'typescript':
-      return "Type utilities, patterns and advanced type manipulations";
-    case 'react':
-      return "Hooks, components, patterns and performance optimizations";
+      return 'TypeScript utility types and advanced patterns';
     case 'javascript':
-      return "Core language features, patterns, and best practices";
-    case 'css':
-      return "Modern CSS techniques, layouts and animations";
+      return 'Modern JavaScript solutions and optimizations';
+    case 'react':
+      return 'React hooks, patterns, and performance tips';
     default:
-      return `Code snippets related to ${category}`;
+      return 'Code snippets and examples';
   }
 }

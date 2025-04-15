@@ -5,7 +5,7 @@ import Tag from 'app/components/tag';
 
 export function PostCard({ post }: { post: Post }) {
   return (
-    <div className="group mb-8 pb-8 border-b border-neutral-200 dark:border-neutral-700">
+    <article className="group mb-8 pb-8 border-b border-neutral-100 dark:border-neutral-800">
       <div className="flex flex-col space-y-2">
         <div className="flex items-center space-x-2 text-sm">
           <time
@@ -38,6 +38,6 @@ export function PostCard({ post }: { post: Post }) {
           </div>
         )}
       </div>
-    </div>
+    </article>
   );
 }

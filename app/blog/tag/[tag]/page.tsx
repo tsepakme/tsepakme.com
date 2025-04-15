@@ -16,11 +16,10 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function TagPage({ params }) {
+export default async function TagPage({ params }: { params: { tag: string } }) {
   const posts = await getPostsByTag(params.tag);
-    const tags = await getAllTags();
+  const tags = await getAllTags();
   
-
   if (!posts.length) {
     notFound();
   }
