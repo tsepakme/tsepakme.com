@@ -5,6 +5,7 @@ import matter from 'gray-matter';
 export interface PostMetadata {
   title: string;
   description: string;
+  summary?: string;
   date: string;
   tags?: string[];
   difficulty?: string;
