@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export const metadata = {
   title: "Resume",
   description: "My professional experience and skills.",
@@ -12,9 +14,9 @@ export default function ResumePage() {
         <h2>Experience</h2>
         <h3>
           <span>Front End Developer - </span>
-          <a href="https://www.hirschtec.eu/" target="_blank" rel="noopener noreferrer">
+          <Link href="https://www.hirschtec.eu/" target="_blank" rel="noopener noreferrer">
             Hirschtec GmbH & Co. KG
-          </a>
+          </Link>
         </h3>
         <p className="text-sm text-neutral-600 dark:text-neutral-400">Mar 2023 - Present (+2 years)</p>
         <ul>
@@ -28,9 +30,9 @@ export default function ResumePage() {
 
         <h3>
           <span>Front End Developer - </span>
-          <a href="https://timeweb.ru/" target="_blank" rel="noopener noreferrer">
+          <Link href="https://timeweb.ru/" target="_blank" rel="noopener noreferrer">
             Timeweb
-          </a>
+          </Link>
         </h3>
         <p className="text-sm text-neutral-600 dark:text-neutral-400">Feb 2023 - Apr 2023 (3 months)</p>
         <ul>
@@ -44,9 +46,9 @@ export default function ResumePage() {
 
         <h3>
           <span>Front End Developer - </span>
-          <a href="https://ati.su/" target="_blank" rel="noopener noreferrer">
+          <Link href="https://ati.su/" target="_blank" rel="noopener noreferrer">
             ATI.SU
-          </a>
+          </Link>
         </h3>
         <p className="text-sm text-neutral-600 dark:text-neutral-400">Mar 2022 - Feb 2023 (1 year)</p>
         <ul>
@@ -93,27 +95,27 @@ export default function ResumePage() {
         <h2>Education</h2>
         <h3>
           <span>Master of Engineering - </span>
-          <a href="https://www.sibstrin.ru/" target="_blank" rel="noopener noreferrer">
+          <Link href="https://www.sibstrin.ru/" target="_blank" rel="noopener noreferrer">
             Novosibirsk State University of Architecture and Civil Engeering
-          </a>
+          </Link>
         </h3>
         <p className="text-sm text-neutral-600 dark:text-neutral-400">Jul 2009 - 2014</p>
         <p>Master of Engeering</p>
 
         <h2>Licenses & Certifications</h2>
-        <a href="https://www.efset.org/cert/EW2iu3" target="_blank" rel="noopener noreferrer">
+        <Link href="https://www.efset.org/cert/EW2iu3" target="_blank" rel="noopener noreferrer">
           Test of English as a Foreign Language - EF Standard English Test (EF SET)
-        </a>
+        </Link>
 
       </div>
       <div className="mt-8">
-        <a
+        <Link
           href="/Aiusha_Mikhailov-Resume.pdf"
           className="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
           download
         >
           Download PDF
-        </a>
+        </Link>
       </div>
     </section >
   );

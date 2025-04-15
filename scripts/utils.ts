@@ -2,8 +2,21 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 
-export function getBlogPosts() {
-  
+export interface PostMetadata {
+  title: string;
+  description: string;
+  date: string;
+  tags?: string[];
+  difficulty?: string;
+  published?: boolean;
+}
+
+export interface BlogPost {
+  slug: string;
+  metadata: PostMetadata;
+}
+
+export function getBlogPosts(): BlogPost[] {
   const postsDirectory = path.join(process.cwd(), 'app', 'blog', 'content');
   
   if (!fs.existsSync(postsDirectory)) {
@@ -12,42 +25,36 @@ export function getBlogPosts() {
   }
   
   try {
-    const fileNames = fs.readdirSync(postsDirectory);
-    
-    const posts = fileNames
+    return fs.readdirSync(postsDirectory)
       .filter(fileName => fileName.endsWith('.md'))
       .map(fileName => {
         const slug = fileName.replace(/\.md$/, '');
-        
         const fullPath = path.join(postsDirectory, fileName);
-        
         const fileContents = fs.readFileSync(fullPath, 'utf8');
-        
         const { data } = matter(fileContents);
         
-        return {
-          slug,
-          metadata: {
-            title: data.title,
-            description: data.description,
-            date: data.date,
-            ...(data.tags && { tags: data.tags }),
-            ...(data.difficulty && { difficulty: data.difficulty })
-          }
+        const metadata: PostMetadata = {
+          title: data.title || 'Untitled',
+          description: data.description || '',
+          date: data.date || new Date().toISOString().split('T')[0]
         };
+        
+        if (data.tags) metadata.tags = data.tags;
+        if (data.difficulty) metadata.difficulty = data.difficulty;
+        if (data.published !== undefined) metadata.published = data.published;
+        
+        return { slug, metadata };
+      })
+      .sort((a, b) => {
+        return new Date(b.metadata.date).getTime() - new Date(a.metadata.date).getTime();
       });
-    
-    return posts.sort((a, b) => {
-      return new Date(b.metadata.date).getTime() - new Date(a.metadata.date).getTime();
-    });
-    
   } catch (error) {
     console.error("Error getting blog posts:", error);
     return [];
   }
 }
 
-export async function getBlogPost(slug) {
+export async function getBlogPost(slug: string) {
   const postsDirectory = path.join(process.cwd(), 'app', 'blog', 'content');
   const fullPath = path.join(postsDirectory, `${slug}.md`);
   
@@ -62,12 +69,12 @@ export async function getBlogPost(slug) {
     
     return {
       slug,
-      title: data.title,
-      description: data.description,
-      date: data.date,
-      content: content,
+      title: data.title || 'Untitled',
+      description: data.description || '',
+      date: data.date || new Date().toISOString().split('T')[0],
+      content,
       difficulty: data.difficulty,
-      tags: data.tags,
+      tags: data.tags || [],
     };
   } catch (error) {
     console.error(`Error loading blog post ${slug}:`, error);
@@ -75,7 +82,7 @@ export async function getBlogPost(slug) {
   }
 }
 
-export function formatDate(date: string, includeRelative: boolean) {
+export function formatDate(date: string, includeRelative: boolean): string {
   let currentDate = new Date();
   if (!date.includes('T')) {
     date = `${date}T00:00:00`;

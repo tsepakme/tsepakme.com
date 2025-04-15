@@ -71,15 +71,15 @@ export default async function SnippetPage({ params }: { params: { slug: string }
   );
 }
 
-function getDifficultyColor(difficulty: string): string {
-  switch (difficulty) {
+function getDifficultyColor(difficulty?: string): string {
+  switch(difficulty) {
     case 'beginner':
-      return "bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400";
+      return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
     case 'intermediate':
-      return "bg-yellow-50 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400";
+      return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
     case 'advanced':
-      return "bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400";
+      return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
     default:
-      return "bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400";
+      return 'bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200';
   }
 }
