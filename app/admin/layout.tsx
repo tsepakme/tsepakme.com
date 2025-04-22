@@ -14,8 +14,9 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession(authOptions);
-  console.log("Admin layout - session:", session ? "Session exists" : "No session");
-
+  if (process.env.NODE_ENV !== 'production') {
+    console.log("Admin layout - session:", session ? "Session exists" : "No session");
+  }
   if (!session) {
     console.log("No session, redirecting to login");
     redirect('/auth/login');
