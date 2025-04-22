@@ -41,7 +41,6 @@ export type SnippetData = z.infer<typeof SnippetSchema>;
  * Checks if a slug contains only valid characters
  */
 export function isValidSlug(slug: string): boolean {
-  // Allow only letters, numbers, hyphens and underscores
   const slugRegex = /^[a-z0-9\-_]+$/;
   return slugRegex.test(slug);
 }
@@ -53,7 +52,7 @@ export function createSlug(title: string): string {
   return title
     .toLowerCase()
     .trim()
-    .replace(/[^\w\s-]/g, '') // Remove all non-word chars except whitespace and hyphens
-    .replace(/\s+/g, '-')     // Replace spaces with hyphens
-    .replace(/-+/g, '-');     // Replace multiple hyphens with single ones
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
 }

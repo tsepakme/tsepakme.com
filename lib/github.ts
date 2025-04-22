@@ -1,11 +1,9 @@
 import { Octokit } from '@octokit/rest';
 
-// GitHub parameters from environment variables
 const GITHUB_OWNER = process.env.GITHUB_OWNER || '';
 const GITHUB_REPO = process.env.GITHUB_REPO || '';
 const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main';
 
-// Initialize Octokit with token
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
 });
@@ -22,19 +20,19 @@ export async function getFileContent(path: string): Promise<{content: string, sh
       ref: GITHUB_BRANCH,
     });
     
-    // @ts-ignore - response.data can be an object or array
     if (Array.isArray(response.data)) {
       throw new Error('Expected file, but got directory');
     }
     
-    // @ts-ignore
-    const content = Buffer.from(response.data.content, 'base64').toString('utf8');
-    // @ts-ignore
-    const sha = response.data.sha;
-    
-    return { content, sha };
+    if ('content' in response.data) {
+      const content = Buffer.from(response.data.content, 'base64').toString('utf8');
+      const sha = response.data.sha;
+      
+      return { content, sha };
+    } else {
+      throw new Error(`File at '${path}' doesn't contain content (might be a symlink)`);
+    }
   } catch (error: any) {
-    // If file not found, return null
     if (error.status === 404) {
       return null;
     }

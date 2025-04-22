@@ -2,7 +2,6 @@ import { formatDate } from "scripts/utils";
 import Link from "next/link";
 import { BlogPost } from "scripts/utils";
 
-// Определяем тип для пропсов компонента
 interface BlogPostsProps {
   posts: BlogPost[];
 }

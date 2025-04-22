@@ -17,13 +17,11 @@ export const authOptions = {
           return null;
         }
         
-        // Check rate limiting
         const ip = req?.headers?.['x-real-ip'] || req?.headers?.['x-forwarded-for'] || 'unknown';
         if (loginLimiter.isRateLimited(ip)) {
           throw new Error('Too many login attempts. Please try again later.');
         }
-        
-        // Verify credentials
+
         const isValidCredentials = await verifyCredentials(
           credentials.username,
           credentials.password
@@ -33,14 +31,12 @@ export const authOptions = {
           return null;
         }
         
-        // Verify 2FA code if configured
         if (process.env.ADMIN_2FA_SECRET) {
           if (!credentials.code || !verify2FACode(credentials.code)) {
             return null;
           }
         }
         
-        // Return user data on successful authentication
         return {
           id: '1',
           name: 'Admin',
@@ -51,19 +47,17 @@ export const authOptions = {
     })
   ],
   pages: {
-    signIn: '/admin/login',
-    error: '/admin/login',
+    signIn: '/auth/login',
+    error: '/auth/login',
   },
   callbacks: {
     async jwt({ token, user }) {
-      // Add role and other data to JWT token
       if (user) {
         token.role = user.role;
       }
       return token;
     },
     async session({ session, token }) {
-      // Add role and other data to session object
       if (token && session.user) {
         session.user.role = token.role as string;
       }
@@ -72,11 +66,11 @@ export const authOptions = {
   },
   session: {
     strategy: 'jwt' as SessionStrategy,
-    maxAge: 60 * 60, // 1 hour
+    maxAge: 60 * 60,
   },
   jwt: {
     secret: process.env.NEXTAUTH_SECRET,
-    maxAge: 60 * 60, // 1 hour
+    maxAge: 60 * 60,
   },
 };
 

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 
-// Interface for CSRF context
 interface CSRFContextValue {
   token: string | null;
   isLoading: boolean;
@@ -10,7 +9,6 @@ interface CSRFContextValue {
   fetchToken: () => Promise<string | null>;
 }
 
-// Function to fetch CSRF token
 async function fetchCSRFToken(): Promise<string | null> {
   try {
     const response = await fetch('/api/csrf-token');
@@ -81,16 +79,13 @@ export async function fetchWithCSRF(
   url: string, 
   options: RequestInit = {}
 ): Promise<Response> {
-  // Get CSRF token
   const csrfToken = await fetchCSRFToken();
   
-  // Create headers with CSRF token
   const headers = new Headers(options.headers || {});
   if (csrfToken) {
     headers.set('x-csrf-token', csrfToken);
   }
   
-  // Make request with CSRF token
   return fetch(url, {
     ...options,
     headers,

@@ -1,18 +1,42 @@
-import bcrypt from 'bcryptjs';
-import speakeasy from 'speakeasy';
+import bcrypt from "bcryptjs";
+import speakeasy from "speakeasy";
 
 /**
  * Verifies the user credentials
  */
-export async function verifyCredentials(username: string, password: string): Promise<boolean> {
-  if (!username || !password) return false;
+export async function verifyCredentials(
+  username: string,
+  password: string
+): Promise<boolean> {
+  console.log('Verifying credentials for:', username);
+  
+  if (!username || !password) {
+    console.log('Missing username or password');
+    return false;
+  }
   
   const validUsername = process.env.ADMIN_USERNAME;
   const hashedPassword = process.env.ADMIN_PASSWORD_HASH;
   
-  if (username !== validUsername) return false;
+  if (!validUsername || !hashedPassword) {
+    console.error('Environment variables not set correctly!');
+    return false;
+  }
+
   
-  return await bcrypt.compare(password, hashedPassword || '');
+  if (username !== validUsername) {
+    console.log('Username mismatch');
+    return false;
+  }
+  
+  try {
+    const result = await bcrypt.compare(password, hashedPassword);
+    console.log('Password comparison result:', result);
+    return result;
+  } catch (error) {
+    console.error('Error comparing password:', error);
+    return false;
+  }
 }
 
 /**
@@ -20,12 +44,12 @@ export async function verifyCredentials(username: string, password: string): Pro
  */
 export function verify2FACode(code: string): boolean {
   if (!code) return false;
-  
+
   return speakeasy.totp.verify({
-    secret: process.env.ADMIN_2FA_SECRET || '',
-    encoding: 'base32',
+    secret: process.env.ADMIN_2FA_SECRET || "",
+    encoding: "base32",
     token: code,
-    window: 1 // Allows small time discrepancies
+    window: 1,
   });
 }
 
@@ -39,13 +63,13 @@ export async function hashPassword(password: string): Promise<string> {
 /**
  * Generates a new 2FA secret
  */
-export function generate2FASecret(): { secret: string, qrCode: string } {
+export function generate2FASecret(): { secret: string; qrCode: string } {
   const secret = speakeasy.generateSecret({
-    name: process.env.NEXTAUTH_URL || 'Admin CMS'
+    name: process.env.NEXTAUTH_URL || "Admin CMS",
   });
-  
+
   return {
     secret: secret.base32,
-    qrCode: secret.otpauth_url || ''
+    qrCode: secret.otpauth_url || "",
   };
 }

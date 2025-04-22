@@ -9,14 +9,12 @@ import { sanitizeHtml, sanitizeFrontmatter } from 'lib/sanitize';
 import { PostSchema, createSlug } from 'lib/validation';
 
 export async function GET(request: NextRequest) {
-  // Get session for authentication check
   const session = await getServerSession(authOptions);
   
   if (!session || session.user?.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   
-  // Check rate limit
   const ip = request.headers.get('x-real-ip') || request.headers.get('x-forwarded-for') || 'unknown';
   if (apiLimiter.isRateLimited(ip)) {
     return NextResponse.json(
@@ -38,20 +36,17 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  // Get session for authentication check
   const session = await getServerSession(authOptions);
   
   if (!session || session.user?.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   
-  // Check CSRF token
   const csrfToken = request.headers.get('x-csrf-token');
   if (!await csrf.validate(csrfToken)) {
     return NextResponse.json({ error: 'Invalid CSRF token' }, { status: 403 });
   }
   
-  // Check rate limit
   const ip = request.headers.get('x-real-ip') || request.headers.get('x-forwarded-for') || 'unknown';
   if (apiLimiter.isRateLimited(ip)) {
     return NextResponse.json(
@@ -62,18 +57,10 @@ export async function POST(request: NextRequest) {
   
   try {
     const requestData = await request.json();
-    
-    // Validate the data
     const validData = PostSchema.parse(requestData);
-    
-    // Sanitize the data
     const sanitizedContent = sanitizeHtml(validData.content);
     const sanitizedFrontmatter = sanitizeFrontmatter(validData);
-    
-    // Create slug from title
     const slug = createSlug(validData.title);
-    
-    // Format frontmatter
     const frontmatter = `---
 title: "${sanitizedFrontmatter.title}"
 description: "${sanitizedFrontmatter.description}"
@@ -85,7 +72,6 @@ ${sanitizedFrontmatter.image ? `image: "${sanitizedFrontmatter.image}"` : ''}
 
 ${sanitizedContent}`;
     
-    // Save file via GitHub API
     await createOrUpdateFile(
       `app/blog/content/${slug}.md`,
       frontmatter,
@@ -96,7 +82,6 @@ ${sanitizedContent}`;
   } catch (error: any) {
     console.error('Error creating post:', error);
     
-    // Send different responses based on error type
     if (error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid data', details: error.errors },

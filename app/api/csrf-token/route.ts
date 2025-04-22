@@ -13,7 +13,6 @@ export async function GET() {
     );
   }
   
-  // Generate new CSRF token
   const csrfToken = csrf.generate();
   
   return NextResponse.json({ csrfToken });

@@ -24,15 +24,12 @@ export class RateLimiter {
     const now = Date.now();
     let attempts = this.attempts.get(key) || [];
     
-    // Filter only attempts within the time window
     attempts = attempts.filter(timestamp => now - timestamp < this.windowMs);
     
-    // If the number of attempts exceeds the limit, rate limit the request
     if (attempts.length >= this.maxAttempts) {
       return true;
     }
     
-    // Add the new attempt
     attempts.push(now);
     this.attempts.set(key, attempts);
     
@@ -44,7 +41,6 @@ export class RateLimiter {
    */
   private cleanup(): void {
     const now = Date.now();
-    // Use Array.from to convert the entries to a regular array first
     Array.from(this.attempts.keys()).forEach(key => {
       const timestamps = this.attempts.get(key)!;
       const validTimestamps = timestamps.filter(
@@ -60,6 +56,5 @@ export class RateLimiter {
   }
 }
 
-// Create instances for different request types
-export const loginLimiter = new RateLimiter(5, 15 * 60 * 1000);  // 5 attempts per 15 minutes
-export const apiLimiter = new RateLimiter(60, 60 * 1000);        // 60 requests per minute
+export const loginLimiter = new RateLimiter(5, 15 * 60 * 1000);
+export const apiLimiter = new RateLimiter(60, 60 * 1000);

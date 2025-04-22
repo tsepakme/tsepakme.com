@@ -1,13 +1,11 @@
 import crypto from 'crypto';
 
-// Token lifetime in seconds
-const TOKEN_LIFETIME = 3600; // 1 hour
+const TOKEN_LIFETIME = 3600;
 
 /**
  * Class for CSRF token management
  */
 class CSRFTokenManager {
-  // Map to store tokens and their creation timestamps
   private tokens: Map<string, number> = new Map();
   
   /**
@@ -52,5 +50,4 @@ class CSRFTokenManager {
   }
 }
 
-// Export a singleton instance
 export const csrf = new CSRFTokenManager();
