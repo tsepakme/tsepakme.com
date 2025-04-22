@@ -20,7 +20,7 @@ type OptionalDeepFields<T> = {
 };
 ```
 
-## Usage Exampe
+## Usage Example
 
 ```ts
 interface Settings {
@@ -51,7 +51,7 @@ const config: PartiallyOptionalSettings = {
 };
 ```
 
-## Hot It Works
+## How It Works
 
 ```ts
 type OptionalDeepFields<T> = {
