@@ -68,7 +68,7 @@ export const authOptions: AuthOptions = {
           return {
             id: '1',
             name: 'Admin',
-            email: 'ayushamikhaylov@gmail.com.com',
+            email: 'ayushamikhaylov@gmail.com',
             role: 'admin'
           };
         } catch (error) {
