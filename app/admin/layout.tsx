@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../api/auth/[...nextauth]/route';
+import { authOptions } from 'app/api/auth/options';
 import Link from 'next/link';
 import SignOutButton from '../../components/SignOutButton';
 
@@ -55,6 +55,9 @@ export default async function AdminLayout({
             </div>
             <div className="flex items-center">
               <div className="flex-shrink-0">
+                <span className="text-sm mr-4 text-gray-500 dark:text-gray-400">
+                  Welcome, {session.user?.name || "Admin"}
+                </span>
                 <SignOutButton />
               </div>
             </div>

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../auth/[...nextauth]/route';
+import { authOptions } from 'app/api/auth/options';
 import { csrf } from 'lib/csrf';
 
 export async function GET() {

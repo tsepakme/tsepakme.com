@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../../auth/[...nextauth]/route';
+import { authOptions } from 'app/api/auth/options';
 import { csrf } from 'lib/csrf';
 import { apiLimiter } from 'lib/rate-limiter';
 import { getBlogPosts } from 'scripts/utils';

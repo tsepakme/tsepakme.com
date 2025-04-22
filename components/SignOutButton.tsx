@@ -3,21 +3,32 @@
 import { useState } from 'react';
 import SignOutModal from './SignOutModal';
 
-export default function SignOutButton() {
+interface SignOutButtonProps {
+  className?: string;
+  buttonText?: string;
+  redirectPath?: string;
+}
+
+export default function SignOutButton({ 
+  className = "px-3 py-2 rounded-md text-sm font-medium text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700",
+  buttonText = "Sign Out",
+  redirectPath = "/auth/login"
+}: SignOutButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <>
       <button
         onClick={() => setIsModalOpen(true)}
-        className="block px-4 py-2 rounded text-red-600 hover:bg-gray-200 dark:hover:bg-gray-700"
+        className={className}
       >
-        Sign Out
+        {buttonText}
       </button>
       
       <SignOutModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        redirectPath={redirectPath}
       />
     </>
   );
