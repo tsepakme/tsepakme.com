@@ -20,7 +20,7 @@ type OptionalDeepFields<T> = {
 };
 ```
 
-## Usage Exampe
+## Usage Example
 
 ```ts
 interface Settings {
