@@ -1,9 +1,9 @@
-import NextAuth, { SessionStrategy } from 'next-auth';
+import NextAuth, { AuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { verifyCredentials, verify2FACode } from 'lib/auth';
 import { loginLimiter } from 'lib/rate-limiter';
 
-export const authOptions = {
+export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Admin Credentials',
@@ -17,8 +17,8 @@ export const authOptions = {
           return null;
         }
         
-        const ip = req?.headers?.['x-real-ip'] || req?.headers?.['x-forwarded-for'] || 'unknown';
-        if (loginLimiter.isRateLimited(ip)) {
+        const ip = req.headers?.['x-real-ip'] || req.headers?.['x-forwarded-for'] || 'unknown';
+        if (loginLimiter.isRateLimited(ip as string)) {
           throw new Error('Too many login attempts. Please try again later.');
         }
 
@@ -65,7 +65,7 @@ export const authOptions = {
     },
   },
   session: {
-    strategy: 'jwt' as SessionStrategy,
+    strategy: 'jwt',
     maxAge: 60 * 60,
   },
   jwt: {
@@ -75,4 +75,5 @@ export const authOptions = {
 };
 
 const handler = NextAuth(authOptions);
+
 export { handler as GET, handler as POST };
