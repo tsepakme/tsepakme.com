@@ -8,9 +8,7 @@ export async function verifyCredentials(
   username: string,
   password: string
 ): Promise<boolean> {
-  if (process.env.DEBUG_MODE === 'true') {
-    console.log('Verifying credentials for:', username);
-  }
+  console.log('Verifying credentials for:', username);
   
   if (!username || !password) {
     console.log('Missing username or password');
