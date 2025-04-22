@@ -15,12 +15,12 @@ export default async function AdminLayout({
 }) {
   const session = await getServerSession(authOptions);
   console.log("Admin layout - session:", session ? "Session exists" : "No session");
-  
+
   if (!session) {
     console.log("No session, redirecting to login");
     redirect('/auth/login');
   }
-  
+
   return (
     <div className="min-h-screen flex flex-col">
       <header className="bg-white dark:bg-gray-800 shadow">
@@ -58,13 +58,15 @@ export default async function AdminLayout({
                 <span className="text-sm mr-4 text-gray-500 dark:text-gray-400">
                   Welcome, {session.user?.name || "Admin"}
                 </span>
-                <SignOutButton />
+                <SignOutButton
+                  buttonText='Logout'
+                />
               </div>
             </div>
           </div>
         </div>
       </header>
-      
+
       <div className="sm:hidden bg-white dark:bg-gray-800 shadow-sm">
         <div className="px-2 pt-2 pb-3 space-y-1">
           <Link
@@ -87,13 +89,13 @@ export default async function AdminLayout({
           </Link>
         </div>
       </div>
-      
+
       <main className="flex-grow bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           {children}
         </div>
       </main>
-      
+
       <footer className="bg-white dark:bg-gray-800 shadow-inner">
         <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm text-gray-500">
