@@ -51,7 +51,7 @@ const config: PartiallyOptionalSettings = {
 };
 ```
 
-## Hot It Works
+## How It Works
 
 ```ts
 type OptionalDeepFields<T> = {
