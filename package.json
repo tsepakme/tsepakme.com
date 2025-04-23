@@ -20,6 +20,7 @@
     "highlight.js": "^11.11.1",
     "html-react-parser": "^5.2.3",
     "isomorphic-dompurify": "^2.23.0",
+    "lucide-react": "^0.503.0",
     "next": "canary",
     "next-auth": "^4.24.11",
     "postcss": "^8.4.35",
