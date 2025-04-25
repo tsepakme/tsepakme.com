@@ -42,7 +42,7 @@ export class RateLimiter {
     
     this.cache.set(key, state);
     
-    const isLimited = state.count > MAX_ATTEMPTS;
+    const isLimited = state.count >= MAX_ATTEMPTS;
     
     if (isLimited) {
       logger.warn(`Rate limit exceeded for ${key.substring(0, 8)}...`, {
