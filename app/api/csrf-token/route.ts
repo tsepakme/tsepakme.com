@@ -13,7 +13,9 @@ export async function GET() {
     );
   }
   
-  const csrfToken = csrf.generate();
+  const sessionId = session.user?.email || String(Date.now());
+  
+  const csrfToken = csrf.generate(sessionId);
   
   return NextResponse.json({ csrfToken });
 }
