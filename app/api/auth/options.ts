@@ -1,86 +1,71 @@
-import { AuthOptions } from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import bcrypt from 'bcryptjs';
-
-async function verifyCredentials(username: string, password: string): Promise<[boolean, string]> {
-  const validUsername = process.env.ADMIN_USERNAME;
-  const storedPassword = process.env.ADMIN_PASSWORD;
-  const hashedPassword = process.env.ADMIN_PASSWORD_HASH;
-  
-  if (!validUsername) {
-    console.error("ADMIN_USERNAME environment variable is not set");
-    return [false, "Server configuration error: missing username"];
-  }
-  
-  if (!storedPassword && !hashedPassword) {
-    console.error("Neither ADMIN_PASSWORD nor ADMIN_PASSWORD_HASH environment variable is set");
-    return [false, "Server configuration error: missing password"];
-  }
-  
-  if (username !== validUsername) {
-    return [false, "Invalid username"];
-  }
-  
-  if (hashedPassword) {
-    try {
-      const isValid = await bcrypt.compare(password, hashedPassword);
-      return [isValid, isValid ? "Success" : "Invalid password"];
-    } catch (error) {
-      console.error("Error comparing password:", error);
-      return [false, "Error verifying password"];
-    }
-  } else {
-    return [password === storedPassword, password === storedPassword ? "Success" : "Invalid password"];
-  }
-}
+import { AuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { verifyCredentials } from "lib/auth";
+import { apiLimiter } from "lib/rate-limiter";
+import { logger } from "lib/logger";
 
 export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
-      name: 'Admin Credentials',
+      name: "Admin Credentials",
       credentials: {
         username: { label: "Username", type: "text" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
         try {
           if (!credentials?.username || !credentials?.password) {
-            console.error("Missing username or password");
+            logger.error("Missing username or password");
             return null;
           }
+
+          const reqHeaders = req?.headers || {};
+          const ip = 
+            reqHeaders["x-forwarded-for"] || 
+            reqHeaders["x-real-ip"] || 
+            "unknown-ip";
+
+          const clientIp = Array.isArray(ip) ? ip[0] : String(ip).split(",")[0];
           
-          console.log(`Auth attempt for user: ${credentials.username}`);
-          console.log(`Running in environment: ${process.env.NODE_ENV}`);
-          console.log(`Auth URL: ${process.env.NEXTAUTH_URL}`);
+          if (apiLimiter.isRateLimited(clientIp)) {
+            logger.warn(`Rate limited login attempt from IP: ${clientIp}`);
+            throw new Error("Too many login attempts. Please try again later.");
+          }
           
-          const [isValid, reason] = await verifyCredentials(
+          logger.info(`Auth attempt for user: ${credentials.username}`, { 
+            ip: clientIp.substring(0, 8) + "...",
+          });
+          
+          const isValid = await verifyCredentials(
             credentials.username,
             credentials.password
           );
           
-          console.log(`Auth result: ${isValid ? "Success" : "Failed"}, Reason: ${reason}`);
-          
           if (!isValid) {
-            console.error("Authentication failed:", reason);
+            logger.warn(`Authentication failed for user: ${credentials.username}`);
             return null;
           }
           
+          logger.info(`Authentication successful for user: ${credentials.username}`);
+
           return {
-            id: '1',
-            name: 'Admin',
-            email: 'ayushamikhaylov@gmail.com',
-            role: 'admin'
+            id: "1",
+            name: "Admin",
+            role: "admin",
           };
         } catch (error) {
-          console.error("Authentication error:", error);
-          return null;
+          logger.error("Authentication error", { 
+            error: error instanceof Error ? error.message : String(error) 
+          });
+          
+          throw new Error(error instanceof Error ? error.message : "Authentication failed");
         }
-      }
-    })
+      },
+    }),
   ],
   pages: {
-    signIn: '/auth/login',
-    error: '/auth/login',
+    signIn: "/auth/login",
+    error: "/auth/error",
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -97,22 +82,7 @@ export const authOptions: AuthOptions = {
     },
   },
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
     maxAge: 60 * 60,
-  },
-  jwt: {
-    secret: process.env.NEXTAUTH_SECRET,
-    maxAge: 60 * 60,
-  },
-  cookies: {
-    sessionToken: {
-      name: `next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-      },
-    }
   },
 };

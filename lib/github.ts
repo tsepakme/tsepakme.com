@@ -1,27 +1,67 @@
 import { Octokit } from '@octokit/rest';
+import { logger } from 'lib/logger';
 
-const GITHUB_OWNER = process.env.GITHUB_OWNER || '';
-const GITHUB_REPO = process.env.GITHUB_REPO || '';
-const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main';
+/**
+ * Validate and get GitHub configuration
+ */
+function getGitHubConfig() {
+  const token = process.env.GITHUB_TOKEN;
+  const owner = process.env.GITHUB_OWNER;
+  const repo = process.env.GITHUB_REPO || "";
+  const branch = process.env.GITHUB_BRANCH || 'main';
 
-const octokit = new Octokit({
-  auth: process.env.GITHUB_TOKEN,
-});
+  if (!token || !owner || !repo) {
+    throw new Error('Required GitHub environment variables are not set');
+  }
+
+  if (!/^[a-zA-Z0-9_-]+\/[a-zA-Z0-9_.-]+$/.test(repo)) {
+    throw new Error(`Invalid repository format: ${repo}`);
+  }
+
+  return { token, owner, repo, branch };
+}
+
+function createOctokit() {
+  const { token } = getGitHubConfig();
+  
+  return new Octokit({
+    auth: token,
+    userAgent: 'tsepakme-admin',
+    timeZone: 'UTC',
+    baseUrl: 'https://api.github.com',
+    log: {
+      debug: () => {},
+      info: () => {},
+      warn: message => logger.warn(message),
+      error: message => logger.error(message)
+    }
+  });
+}
+
+const octokit = createOctokit();
 
 /**
  * Gets a file's content from GitHub
+ * @param path File path within the repository
+ * @returns File content and SHA, or null if file doesn't exist
  */
 export async function getFileContent(path: string): Promise<{content: string, sha: string} | null> {
   try {
+    if (path.includes('../') || path.startsWith('/')) {
+      throw new Error(`Invalid path format: ${path}`);
+    }
+    
+    const { owner, repo, branch } = getGitHubConfig();
+    
     const response = await octokit.repos.getContent({
-      owner: GITHUB_OWNER,
-      repo: GITHUB_REPO,
+      owner,
+      repo,
       path,
-      ref: GITHUB_BRANCH,
+      ref: branch,
     });
     
     if (Array.isArray(response.data)) {
-      throw new Error('Expected file, but got directory');
+      throw new Error(`Expected file, but got directory: ${path}`);
     }
     
     if ('content' in response.data) {
@@ -37,58 +77,126 @@ export async function getFileContent(path: string): Promise<{content: string, sh
       return null;
     }
     
-    console.error('Error fetching file from GitHub:', error);
-    throw error;
+    logger.error('Error fetching file from GitHub', { 
+      path,
+      error: error.message || 'Unknown error'
+    });
+    
+    return null;
   }
 }
 
 /**
  * Creates or updates a file in GitHub
+ * @param path File path within the repository
+ * @param content File content
+ * @param commitMessage Commit message
+ * @returns Promise resolving when the operation completes
  */
 export async function createOrUpdateFile(
   path: string,
   content: string,
-  message: string,
-  sha?: string
-): Promise<{ success: boolean, sha: string }> {
+  commitMessage: string
+): Promise<void> {
   try {
-    const response = await octokit.repos.createOrUpdateFileContents({
-      owner: GITHUB_OWNER,
-      repo: GITHUB_REPO,
-      path,
-      message,
-      content: Buffer.from(content).toString('base64'),
-      branch: GITHUB_BRANCH,
-      ...(sha ? { sha } : {}),
+    if (path.includes('../') || path.startsWith('/')) {
+      throw new Error(`Invalid path format: ${path}`);
+    }
+    
+    const config = getGitHubConfig();
+    const { token, owner, repo, branch } = config;
+
+    logger.info('Creating or updating file', { 
+      path, 
+      contentLength: content.length,
+      repo: `${owner}/${repo}`
     });
     
-    return { 
-      success: true, 
-      sha: response.data.content?.sha ?? '' 
+    const contentBase64 = Buffer.from(content).toString('base64');
+    
+    let sha: string | undefined;
+    try {
+      const fileData = await getFileContent(path);
+      if (fileData) {
+        sha = fileData.sha;
+      }
+    } catch (error) {
+      if (!(error instanceof Error && error.message.includes('404'))) {
+        throw error;
+      }
+    }
+    
+    const requestData: any = {
+      message: commitMessage,
+      content: contentBase64,
+      branch
     };
+    
+    if (sha) {
+      requestData.sha = sha;
+    }
+    
+    const response = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/contents/${path}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Authorization': `token ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/vnd.github.v3+json'
+        },
+        body: JSON.stringify(requestData)
+      }
+    );
+    
+    if (!response.ok) {
+      const errorData = await response.text();
+      throw new Error(`Failed to update file (${response.status}): ${errorData}`);
+    }
+    
+    logger.info('File successfully updated', { path });
   } catch (error) {
-    console.error('Error creating/updating file in GitHub:', error);
+    logger.error('Error updating file in GitHub', {
+      path,
+      error: error instanceof Error ? error.message : String(error)
+    });
     throw error;
   }
 }
 
 /**
  * Deletes a file from GitHub
+ * @param path File path to delete
+ * @param message Commit message
+ * @param sha SHA of the file to delete
+ * @returns Promise resolving to true if successful
  */
 export async function deleteFile(path: string, message: string, sha: string): Promise<boolean> {
   try {
+    if (path.includes('../') || path.startsWith('/')) {
+      throw new Error(`Invalid path format: ${path}`);
+    }
+    
+    const { owner, repo, branch } = getGitHubConfig();
+    
+    logger.info('Deleting file from GitHub', { path });
+    
     await octokit.repos.deleteFile({
-      owner: GITHUB_OWNER,
-      repo: GITHUB_REPO,
+      owner,
+      repo,
       path,
       message,
       sha,
-      branch: GITHUB_BRANCH,
+      branch,
     });
     
+    logger.info('File successfully deleted', { path });
     return true;
   } catch (error) {
-    console.error('Error deleting file from GitHub:', error);
+    logger.error('Error deleting file from GitHub', {
+      path,
+      error: error instanceof Error ? error.message : String(error)
+    });
     throw error;
   }
 }

@@ -1,60 +1,70 @@
 /**
- * Class for rate limiting requests
+ * Rate limiter implementation to prevent brute force attacks
+ * Uses in-memory LRU cache for tracking attempts
  */
+
+import { LRUCache } from 'lru-cache';
+import { logger } from './logger';
+
+const WINDOW_MS = 15 * 60 * 1000;
+const MAX_ATTEMPTS = 5;
+
+interface RateLimitState {
+  count: number;
+  resetAt: number;
+}
+
 export class RateLimiter {
-  private attempts: Map<string, number[]> = new Map();
-  private readonly maxAttempts: number;
-  private readonly windowMs: number;
-  
-  /**
-   * @param maxAttempts Maximum number of attempts allowed
-   * @param windowMs Time window in milliseconds
-   */
-  constructor(maxAttempts: number, windowMs: number) {
-    this.maxAttempts = maxAttempts;
-    this.windowMs = windowMs;
+  private cache: LRUCache<string, RateLimitState>;
+
+  constructor() {
+    this.cache = new LRUCache<string, RateLimitState>({
+      max: 500,
+      ttl: WINDOW_MS
+    });
   }
-  
+
   /**
-   * Checks if the request is rate limited
+   * Check if a key (IP address) is rate limited
+   * @param key Identifier (usually IP address)
+   * @returns true if rate limited, false otherwise
    */
-  isRateLimited(key: string): boolean {
-    this.cleanup();
-    
+  public isRateLimited(key: string): boolean {
     const now = Date.now();
-    let attempts = this.attempts.get(key) || [];
+    const state = this.cache.get(key) || { count: 0, resetAt: now + WINDOW_MS };
     
-    attempts = attempts.filter(timestamp => now - timestamp < this.windowMs);
-    
-    if (attempts.length >= this.maxAttempts) {
-      return true;
+    if (now > state.resetAt) {
+      state.count = 0;
+      state.resetAt = now + WINDOW_MS;
     }
     
-    attempts.push(now);
-    this.attempts.set(key, attempts);
+    state.count += 1;
     
-    return false;
+    this.cache.set(key, state);
+    
+    const isLimited = state.count > MAX_ATTEMPTS;
+    
+    if (isLimited) {
+      logger.warn(`Rate limit exceeded for ${key.substring(0, 8)}...`, {
+        attempts: state.count,
+        resetAt: new Date(state.resetAt).toISOString()
+      });
+    }
+    
+    return isLimited;
   }
-  
+
   /**
-   * Cleans up old entries to save memory
+   * Get remaining login attempts for a key
+   * @param key Identifier (usually IP address)
+   * @returns Number of attempts remaining
    */
-  private cleanup(): void {
-    const now = Date.now();
-    Array.from(this.attempts.keys()).forEach(key => {
-      const timestamps = this.attempts.get(key)!;
-      const validTimestamps = timestamps.filter(
-        timestamp => now - timestamp < this.windowMs
-      );
-      
-      if (validTimestamps.length === 0) {
-        this.attempts.delete(key);
-      } else {
-        this.attempts.set(key, validTimestamps);
-      }
-    });
+  public getRemainingAttempts(key: string): number {
+    const state = this.cache.get(key);
+    if (!state) return MAX_ATTEMPTS;
+    
+    return Math.max(0, MAX_ATTEMPTS - state.count);
   }
 }
 
-export const loginLimiter = new RateLimiter(5, 15 * 60 * 1000);
-export const apiLimiter = new RateLimiter(60, 60 * 1000);
+export const apiLimiter = new RateLimiter();
