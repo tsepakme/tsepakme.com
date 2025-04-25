@@ -22,7 +22,7 @@ export function errorResponse(error: ApiError | Error | string, status: number =
     ? { message: error } 
     : 'message' in error 
       ? error 
-      : { message: error.toString() };
+      : { message: String(error) };
       
   logger.error('API error', { 
     status, 
