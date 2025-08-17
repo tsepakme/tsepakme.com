@@ -61,7 +61,6 @@ export function formatDate(dateStr: string, locale: string = 'en-US'): string {
  * @param value The value to mask
  * @returns Masked string with only first and last 3 characters visible
  */
-export function maskSensitiveValue(value?: string): string | boolean {
 export function maskSensitiveValue(value?: string): string {
   if (!value) return 'N/A';
   if (value.length <= 6) return '******';
