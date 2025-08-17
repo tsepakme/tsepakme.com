@@ -25,7 +25,12 @@ export const authOptions: AuthOptions = {
             reqHeaders["x-real-ip"] || 
             "unknown-ip";
 
-          const clientIp = Array.isArray(ip) ? ip[0] : String(ip).split(",")[0];
+          // Securely extract client IP address
+          let clientIp = req?.socket?.remoteAddress || "unknown-ip";
+          // Optionally, validate IP format (IPv4/IPv6)
+          if (typeof clientIp !== "string" || !clientIp.match(/^(\d{1,3}\.){3}\d{1,3}$|^[a-fA-F0-9:]+$/)) {
+            clientIp = "unknown-ip";
+          }
           
           if (apiLimiter.isRateLimited(clientIp)) {
             logger.warn(`Rate limited login attempt from IP: ${clientIp}`);
