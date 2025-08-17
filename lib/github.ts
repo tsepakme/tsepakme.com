@@ -14,7 +14,10 @@ function getGitHubConfig() {
     throw new Error('Required GitHub environment variables are not set');
   }
 
-  if (!/^[a-zA-Z0-9_-]+\/[a-zA-Z0-9_.-]+$/.test(repo)) {
+  if (!/^[a-zA-Z0-9-]+$/.test(owner)) {
+    throw new Error(`Invalid owner format: ${owner}`);
+  }
+  if (!/^[a-zA-Z0-9_.-]+$/.test(repo)) {
     throw new Error(`Invalid repository format: ${repo}`);
   }
 
