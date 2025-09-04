@@ -110,7 +110,7 @@ export default function ResumePage() {
       </div>
       <div className="mt-8">
         <Link
-          href="/Aiusha_Mikhailov-Resume.pdf"
+          href="/Aiusha_Mikhailov-Frontend_Resume.pdf"
           className="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
           download
         >
