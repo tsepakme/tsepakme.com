@@ -1,40 +1,51 @@
-import bcrypt from "bcryptjs";
+import bcrypt from 'bcryptjs';
 import speakeasy from "speakeasy";
+import { logger } from 'lib/logger';
 
 /**
- * Verifies the user credentials
+ * Verifies user credentials against stored values
+ * @param username The provided username
+ * @param password The provided password (plaintext)
+ * @returns Promise resolving to true if credentials are valid, false otherwise
  */
 export async function verifyCredentials(
   username: string,
   password: string
 ): Promise<boolean> {
-  console.log('Verifying credentials for:', username);
-  
-  if (!username || !password) {
-    console.log('Missing username or password');
-    return false;
-  }
-  
   const validUsername = process.env.ADMIN_USERNAME;
-  const hashedPassword = process.env.ADMIN_PASSWORD_HASH;
+  let hashedPassword = process.env.ADMIN_PASSWORD_HASH;
   
   if (!validUsername || !hashedPassword) {
-    console.error('Environment variables not set correctly!');
+    logger.error('Environment variables not set correctly', { 
+      usernameSet: !!validUsername,
+      passwordHashSet: !!hashedPassword
+    });
     return false;
   }
 
+  hashedPassword = hashedPassword.replace(/\\(\$)/g, '$1');
   
   if (username !== validUsername) {
-    console.log('Username mismatch');
+    logger.debug('Username mismatch', { 
+      attempt: username.substring(0, 3) + '...'
+    });
     return false;
   }
   
   try {
+    logger.debug('Comparing password', {
+      hashFormat: hashedPassword.substring(0, 7) + '...',
+      hashLength: hashedPassword.length
+    });
+    
     const result = await bcrypt.compare(password, hashedPassword);
-    console.log('Password comparison result:', result);
+    logger.debug('Password comparison result', { result });
+    
     return result;
   } catch (error) {
-    console.error('Error comparing password:', error);
+    logger.error('Error comparing password', { 
+      error: error instanceof Error ? error.message : String(error)
+    });
     return false;
   }
 }
@@ -54,7 +65,9 @@ export function verify2FACode(code: string): boolean {
 }
 
 /**
- * Generates a password hash for storage
+ * Hashes a password using bcrypt
+ * @param password The plaintext password
+ * @returns Promise resolving to the hashed password
  */
 export async function hashPassword(password: string): Promise<string> {
   return await bcrypt.hash(password, 12);
