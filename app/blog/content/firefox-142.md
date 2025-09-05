@@ -90,9 +90,9 @@ As with any new web platform features, adoption across browsers varies:
   👉 For cross-browser apps, stick to standard `getRangeAt()` until wider support arrives.
 
 - **Animation.overallProgress & commitStyles()** → Supported in Firefox 142+ and Chromium, but Safari still lags.  
-  👉 Consider feature-detection (\`if ("overallProgress" in Animation.prototype)\`) before relying on it.
+  👉 Consider feature-detection (`if ("overallProgress" in Animation.prototype)`) before relying on it.
 
-- **Directory Uploads** (\`webkitdirectory\`) → Works in Chromium and Firefox 142 (including Android). Safari support is partial.  
+- **Directory Uploads** (`webkitdirectory`) → Works in Chromium and Firefox 142 (including Android). Safari support is partial.  
   👉 Always provide single-file fallback for mobile and older browsers.
 
 - **wllama API** → Firefox-only, extension context only. Not available in Chromium or Safari.  
