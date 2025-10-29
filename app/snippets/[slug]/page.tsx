@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getSnippetBySlug, getAllSnippetSlugs } from 'app/snippets/lib/markdown';
-import { MarkdownView } from 'app/components/markdown-view';
+import { MarkdownContent } from 'app/components/markdown-content';
 import Tag from 'app/components/tag';
 
 export async function generateStaticParams() {
@@ -56,9 +56,7 @@ export default async function SnippetPage({ params }: { params: { slug: string }
         </div>
       </div>
       
-      <div className="prose prose-neutral dark:prose-invert max-w-none">
-        <MarkdownView html={snippet.html} />
-      </div>
+      <MarkdownContent html={snippet.html} />
       
       {snippet.meta.tags && snippet.meta.tags.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-8">

@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { getPostBySlug, getAllPostSlugs } from 'app/blog/lib/markdown';
-import { MarkdownView } from 'app/components/markdown-view';
+import { MarkdownContent } from 'app/components/markdown-content';
 import Tag from 'app/components/tag';
 import { formatDate, getReadingTime } from 'scripts/utils';
 
@@ -66,7 +66,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
         </div>
       </div>
 
-      <MarkdownView html={post.html} />
+      <MarkdownContent html={post.html} />
 
       {post.meta.tags && post.meta.tags.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-8">

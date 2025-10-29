@@ -7,6 +7,7 @@ import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
+import { rehypeCopyButton, rehypeExternalLinks } from './rehype-plugins';
 
 export interface BaseMeta {
   title: string;
@@ -38,6 +39,8 @@ async function markdownToHtml(markdown: string): Promise<string> {
     .use(remarkGfm)
     .use(remarkRehype)
     .use(rehypeHighlight, { detect: true, ignoreMissing: true } as any)
+    .use(rehypeCopyButton)
+    .use(rehypeExternalLinks)
     .use(rehypeStringify)
     .process(markdown);
   
