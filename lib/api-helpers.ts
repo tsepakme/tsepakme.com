@@ -4,8 +4,6 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from 'app/api/auth/options';
 import { logger } from './logger';
 
 interface ApiError {
@@ -38,30 +36,6 @@ export function errorResponse(error: ApiError | Error | string, status: number =
  */
 export function successResponse(data: any, status: number = 200) {
   return NextResponse.json(data, { status });
-}
-
-/**
- * Checks if user is authenticated as admin
- * Returns next handler result or 401 error
- */
-export async function withAdminAuth(
-  req: NextRequest,
-  handler: () => Promise<NextResponse>
-): Promise<NextResponse> {
-  try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session || session.user?.role !== 'admin') {
-      return errorResponse('Unauthorized', 401);
-    }
-    
-    return await handler();
-  } catch (error) {
-    return errorResponse(
-      error instanceof Error ? error : String(error),
-      500
-    );
-  }
 }
 
 /**

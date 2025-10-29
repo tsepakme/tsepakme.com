@@ -8,23 +8,11 @@ interface AppConfig {
     name: string;
     baseUrl: string;
   };
-  auth: {
-    tokenLifetime: number;
-    adminUsername: string | undefined;
-    adminPasswordHash: string | undefined;
-  };
   github: {
     token: string | undefined;
     owner: string | undefined;
     repo: string;
     branch: string;
-  };
-  security: {
-    rateLimit: {
-      window: number;
-      maxAttempts: number;
-    };
-    csrfTokenLifetime: number;
   };
 }
 
@@ -38,34 +26,15 @@ function getRepoName(repoUrl: string = ''): string {
   return repoUrl;
 }
 
-/**
- * Fix hash escaping issues for bcrypt hashes
- */
-function normalizeHash(hash: string = ''): string {
-  return hash.replace(/\\(\$)/g, '$1');
-}
-
 export const config: AppConfig = {
   app: {
     name: 'tsepakme.com',
-    baseUrl: process.env.NEXTAUTH_URL || 'http://localhost:3000',
-  },
-  auth: {
-    tokenLifetime: 60 * 60,
-    adminUsername: process.env.ADMIN_USERNAME,
-    adminPasswordHash: normalizeHash(process.env.ADMIN_PASSWORD_HASH || ''),
+    baseUrl: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
   },
   github: {
     token: process.env.GITHUB_TOKEN,
     owner: process.env.GITHUB_OWNER,
     repo: getRepoName(process.env.GITHUB_REPO || ''),
     branch: process.env.GITHUB_BRANCH || 'main',
-  },
-  security: {
-    rateLimit: {
-      window: 15 * 60 * 1000,
-      maxAttempts: 5,
-    },
-    csrfTokenLifetime: 60 * 60,
   }
 };

@@ -1,29 +1,33 @@
-# Portfolio & Blog with TypeScript Snippets
+# Simplified Portfolio & Blog
 
-A modern, performance-optimized portfolio site with integrated blog and code snippets collection. Built with Next.js, TypeScript, and Tailwind CSS.
+A clean, performance-optimized portfolio site with integrated blog and code snippets collection. Built with Next.js, TypeScript, and Tailwind CSS.
+
+**Simplified Architecture**: No admin panel, no authentication, no backend complexity - just pure content presentation.
 
 ## Features
 
 ### Content & Presentation
-- **Pure Markdown support** for clean content authoring without client components
+- **Pure Markdown support** for clean content authoring
 - **TypeScript code snippets collection** with syntax highlighting
 - **Dark/light mode** with system preference detection
 - **Mobile-responsive design** with Tailwind CSS
-- **Syntax highlighting** for code blocks with copy functionality
+- **Syntax highlighting** for code blocks
+- **File-based content management** - no database needed
 
 ### Performance & SEO
-- **Optimized for SEO** (sitemap, robots.txt, JSON-LD schema)
+- **Optimized for SEO** (sitemap, robots.txt, meta tags)
 - **RSS Feed** for blog subscription
 - **Dynamic OG images** for social media sharing
-- **Vercel Speed Insights / Web Analytics** integration
+- **Vercel Analytics** integration
 - **App Router** for better performance and routing
+- **Static site generation** for blazing fast performance
 
 ### Technical Stack
-- **Next.js** with App Router architecture
+- **Next.js 15** with App Router architecture
 - **TypeScript** for type safety
-- **Tailwind CSS v4** for styling
-- **Static site generation** for blazing fast performance
-- **Client/Server component separation** for optimal rendering
+- **Tailwind CSS v4** (alpha) for styling
+- **Server Components** by default for optimal performance
+- **Unified/Remark/Rehype** for Markdown processing
 
 ## Content Types
 
@@ -59,37 +63,46 @@ npm start
 
 ## Content Management
 
-Adding a Blog Post
+### Adding a Blog Post
 
-Create a new `.md` file in `content` with frontmatter:
+Create a new `.md` file in `app/blog/content/` with frontmatter:
 
-```ts
+```markdown
 ---
 title: "Your Post Title"
 description: "Brief description of your post"
 date: "YYYY-MM-DD"
 tags: ["tag1", "tag2"]
+published: true
 ---
 
-Content goes here...
+Сontent goes here...
 ```
 
-Adding a Code Snippet
+### Adding a Code Snippet
 
-Create a new `.md` file in `content` with frontmatter:
+Create a new `.md` file in `app/snippets/content/` with frontmatter:
 
-```ts
+```markdown
 ---
-title: "JavaScript Utility Name"
+title: "Utility Type Name"
 description: "What this utility does"
 date: "YYYY-MM-DD"
-category: "javascript"
-tags: ["performance", "other-tags"]
-difficulty: "beginner|intermediate|advanced"
+category: "typescript"
+tags: ["utility-types", "generics"]
+difficulty: "intermediate"
+published: true
 ---
 
-Content goes here...
+Your TypeScript snippet with explanations...
 ```
+
+### File-based Content System
+
+- **No database required** - all content stored as Markdown files
+- **Git-based workflow** - version control your content
+- **Simple deployment** - just push to repository
+- **Automatic regeneration** - Next.js handles the rest
 
 ## Deployment
 
