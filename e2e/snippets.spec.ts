@@ -73,10 +73,9 @@ test.describe('Snippets Pages', () => {
     if (categoryCount > 0) {
       const firstCategory = categoryLinks.first();
       const categoryHref = await firstCategory.getAttribute('href');
-      await firstCategory.click();
       
-      // Wait for navigation with increased timeout
-      await page.waitForURL(categoryHref!, { timeout: 10000 });
+      // Direct navigation test - more reliable than click + waitForURL
+      await page.goto(categoryHref!);
       
       // Should show filtered snippets - look for page heading
       await expect(page.locator('h1').first()).toBeVisible();

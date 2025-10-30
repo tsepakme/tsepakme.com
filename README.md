@@ -34,7 +34,6 @@ A clean, performance-optimized portfolio site with integrated blog and code snip
 - **Playwright** for end-to-end testing
 - **TypeScript** strict mode for compile-time safety
 - **GitHub Actions** CI/CD pipeline
-- **Lighthouse CI** for performance monitoring
 - **ESLint** for code quality
 - **Comprehensive test coverage** across all components and utilities
 
@@ -157,7 +156,6 @@ GitHub Actions automatically:
 - Performs TypeScript type checking
 - Builds the application
 - Runs security audits
-- Executes Lighthouse performance tests
 - Deploys to production on main branch
 
 ## Deployment

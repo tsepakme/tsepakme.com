@@ -99,14 +99,12 @@ __tests__/
 2. **Integration Tests** validate API functionality
 3. **E2E Tests** ensure user experience quality
 4. **Type Checking** prevents runtime errors
-5. **Performance Tests** with Lighthouse CI
-6. **Security Audits** for dependencies
+5. **Security Audits** for dependencies
 
 ### Quality Gates
 - All tests must pass before merge
 - Coverage thresholds must be maintained
 - TypeScript compilation must succeed
-- Lighthouse scores must meet minimum requirements
 
 ## Running Tests Locally
 
