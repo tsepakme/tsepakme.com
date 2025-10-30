@@ -8,7 +8,7 @@ interface BlogPostsProps {
 
 export function BlogPosts({ posts }: BlogPostsProps) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4" data-testid="blog-posts-container">
       {(posts || [])
         .filter(post => post && post.slug)
         .sort((a, b) => {

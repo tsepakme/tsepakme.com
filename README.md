@@ -29,6 +29,15 @@ A clean, performance-optimized portfolio site with integrated blog and code snip
 - **Server Components** by default for optimal performance
 - **Unified/Remark/Rehype** for Markdown processing
 
+### Testing & Quality Assurance
+- **Jest** for unit testing with React Testing Library
+- **Playwright** for end-to-end testing
+- **TypeScript** strict mode for compile-time safety
+- **GitHub Actions** CI/CD pipeline
+- **Lighthouse CI** for performance monitoring
+- **ESLint** for code quality
+- **Comprehensive test coverage** across all components and utilities
+
 ## Content Types
 
 ### Blog
@@ -104,6 +113,53 @@ Your TypeScript snippet with explanations...
 - **Simple deployment** - just push to repository
 - **Automatic regeneration** - Next.js handles the rest
 
+## Testing
+
+### Running Tests
+
+```bash
+# Run all unit tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage report
+npm run test:coverage
+
+# Run tests in CI mode (no watch)
+npm run test:ci
+
+# Run end-to-end tests
+npm run test:e2e
+
+# Run E2E tests with UI
+npm run test:e2e:ui
+
+# Run all tests (unit + E2E)
+npm run test:all
+```
+
+### Test Coverage
+
+The project includes comprehensive test coverage for:
+
+- **Unit Tests**: All utility functions, markdown processing, and helpers
+- **Component Tests**: React components with React Testing Library
+- **API Route Tests**: All API endpoints with proper mocking
+- **End-to-End Tests**: Complete user journeys through Playwright
+- **Integration Tests**: Cross-component functionality
+
+### CI/CD Pipeline
+
+GitHub Actions automatically:
+- Runs all tests on pull requests
+- Performs TypeScript type checking
+- Builds the application
+- Runs security audits
+- Executes Lighthouse performance tests
+- Deploys to production on main branch
+
 ## Deployment
 
 Optimized for deployment on Vercel with:
@@ -111,6 +167,7 @@ Optimized for deployment on Vercel with:
 - Automatic preview deployments
 - Edge function support
 - Analytics integration
+- Performance monitoring
 
 ## License
 
