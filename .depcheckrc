@@ -1,0 +1,19 @@
+{
+  "ignores": [
+    "@types/*",
+    "eslint*",
+    "prettier*",
+    "@tailwindcss/postcss",
+    "postcss",
+    "tailwindcss",
+    "typescript",
+    "jest-environment-jsdom"
+  ],
+  "skip-missing": true,
+  "ignore-dirs": [
+    "node_modules",
+    ".next",
+    "coverage",
+    "playwright-report"
+  ]
+}

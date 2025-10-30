@@ -26,8 +26,12 @@ test.describe('Homepage', () => {
     await expect(page.getByRole('link', { name: 'resume' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'snippets' })).toBeVisible();
     
-    // Test navigation to blog
-    await page.getByRole('link', { name: 'blog' }).click();
+    // Test navigation to blog with more reliable approach
+    const blogLink = page.getByRole('link', { name: 'blog' });
+    await blogLink.click();
+    
+    // Wait for navigation to complete
+    await page.waitForURL('/blog', { waitUntil: 'networkidle' });
     await expect(page).toHaveURL('/blog');
     await expect(page.getByRole('heading', { name: 'Blog' })).toBeVisible();
   });
