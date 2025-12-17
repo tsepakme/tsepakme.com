@@ -8,20 +8,22 @@ export async function generateStaticParams() {
   return categories.map(category => ({ category }));
 }
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata({ params }: { params: Promise<{ category: string }> }) {
+  const { category } = await params;
   return {
-    title: `${params.category} Snippets`,
-    description: `Code snippets related to ${params.category}`,
+    title: `${category} Snippets`,
+    description: `Code snippets related to ${category}`,
   };
 }
 
-export default async function CategoryPage({ params }) {
-  const snippets = await getSnippetsByCategory(params.category);
-  
+export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
+  const { category } = await params;
+  const snippets = await getSnippetsByCategory(category);
+
   if (!snippets.length) {
     notFound();
   }
-  
+
   return (
     <section>
       <div className="flex items-center gap-2 mb-8">
@@ -34,13 +36,13 @@ export default async function CategoryPage({ params }) {
         <span className="text-neutral-300 dark:text-neutral-700">/</span>
         <span className="text-neutral-500">Categories</span>
         <span className="text-neutral-300 dark:text-neutral-700">/</span>
-        <span className="font-medium">{params.category}</span>
+        <span className="font-medium">{category}</span>
       </div>
-      
+
       <h1 className="font-semibold text-2xl mb-8 tracking-tighter">
-        {params.category.charAt(0).toUpperCase() + params.category.slice(1)} Snippets
+        {category.charAt(0).toUpperCase() + category.slice(1)} Snippets
       </h1>
-      
+
       <div className="grid gap-4 grid-cols-1">
         {snippets.map(snippet => (
           <SnippetCard key={snippet.slug} snippet={snippet} />

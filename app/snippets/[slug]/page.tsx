@@ -9,9 +9,10 @@ export async function generateStaticParams() {
   return slugs.map(slug => ({ slug }));
 }
 
-export async function generateMetadata({ params }) {
-  const snippet = await getSnippetBySlug(params.slug);
-  
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const snippet = await getSnippetBySlug(slug);
+
   if (!snippet) {
     return {
       title: 'Snippet Not Found',
@@ -25,17 +26,18 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function SnippetPage({ params }: { params: { slug: string } }) {
-  const snippet = await getSnippetBySlug(params.slug);
-  
+export default async function SnippetPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const snippet = await getSnippetBySlug(slug);
+
   if (!snippet) {
     notFound();
   }
-  
+
   return (
     <section>
       <div className="flex flex-col gap-2 mb-8">
-        <Link 
+        <Link
           href="/snippets"
           className="text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
         >
@@ -43,7 +45,7 @@ export default async function SnippetPage({ params }: { params: { slug: string }
         </Link>
         <h1 className="font-semibold text-2xl tracking-tighter mt-2">{snippet.meta.title}</h1>
         <p className="text-neutral-600 dark:text-neutral-400">{snippet.meta.description}</p>
-        
+
         <div className="flex items-center gap-2 mt-4">
           <div className="rounded-full px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 text-xs">
             {snippet.meta.category}
@@ -55,9 +57,9 @@ export default async function SnippetPage({ params }: { params: { slug: string }
           )}
         </div>
       </div>
-      
+
       <MarkdownContent html={snippet.html} />
-      
+
       {snippet.meta.tags && snippet.meta.tags.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-8">
           {snippet.meta.tags.map(tag => (
@@ -70,7 +72,7 @@ export default async function SnippetPage({ params }: { params: { slug: string }
 }
 
 function getDifficultyColor(difficulty?: string): string {
-  switch(difficulty) {
+  switch (difficulty) {
     case 'beginner':
       return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
     case 'intermediate':

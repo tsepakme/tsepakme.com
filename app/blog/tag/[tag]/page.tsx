@@ -9,17 +9,19 @@ export async function generateStaticParams() {
   return tags.map(tag => ({ tag }));
 }
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata({ params }: { params: Promise<{ tag: string }> }) {
+  const { tag } = await params;
   return {
-    title: `Posts tagged with #${params.tag}`,
-    description: `Blog posts and articles tagged with #${params.tag}`,
+    title: `Posts tagged with #${tag}`,
+    description: `Blog posts and articles tagged with #${tag}`,
   };
 }
 
-export default async function TagPage({ params }: { params: { tag: string } }) {
-  const posts = await getPostsByTag(params.tag);
+export default async function TagPage({ params }: { params: Promise<{ tag: string }> }) {
+  const { tag } = await params;
+  const posts = await getPostsByTag(tag);
   const tags = await getAllTags();
-  
+
   if (!posts.length) {
     notFound();
   }
@@ -36,11 +38,11 @@ export default async function TagPage({ params }: { params: { tag: string } }) {
         <span className="text-neutral-300 dark:text-neutral-700">/</span>
         <span className="text-neutral-500">Tags</span>
         <span className="text-neutral-300 dark:text-neutral-700">/</span>
-        <span className="font-medium">#{params.tag}</span>
+        <span className="font-medium">#{tag}</span>
       </div>
 
       <h1 className="font-medium text-2xl mb-8 tracking-tighter">
-        Posts tagged with #{params.tag}
+        Posts tagged with #{tag}
       </h1>
 
       <div className="flex flex-col md:flex-row gap-8">
@@ -54,7 +56,7 @@ export default async function TagPage({ params }: { params: { tag: string } }) {
             <h2 className="font-medium text-xl mb-4 tracking-tighter">Tags</h2>
             <div className="flex flex-wrap">
               {tags.map(tag => (
-                <Tag key={tag} tag={tag} slug={'blog'}/>
+                <Tag key={tag} tag={tag} slug={'blog'} />
               ))}
             </div>
           </div>

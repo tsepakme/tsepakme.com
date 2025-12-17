@@ -8,20 +8,22 @@ export async function generateStaticParams() {
   return tags.map(tag => ({ tag }));
 }
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata({ params }: { params: Promise<{ tag: string }> }) {
+  const { tag } = await params;
   return {
-    title: `#${params.tag} Snippets`,
-    description: `Code snippets tagged with #${params.tag}`,
+    title: `#${tag} Snippets`,
+    description: `Code snippets tagged with #${tag}`,
   };
 }
 
-export default async function TagPage({ params }: { params: { tag: string } }) {
-  const snippets = await getSnippetsByTag(params.tag);
-  
+export default async function TagPage({ params }: { params: Promise<{ tag: string }> }) {
+  const { tag } = await params;
+  const snippets = await getSnippetsByTag(tag);
+
   if (!snippets.length) {
     notFound();
   }
-  
+
   return (
     <section>
       <div className="flex items-center gap-2 mb-8">
@@ -34,18 +36,18 @@ export default async function TagPage({ params }: { params: { tag: string } }) {
         <span className="text-neutral-300 dark:text-neutral-700">/</span>
         <span className="text-neutral-500">Tags</span>
         <span className="text-neutral-300 dark:text-neutral-700">/</span>
-        <span className="font-medium">#{params.tag}</span>
+        <span className="font-medium">#{tag}</span>
       </div>
-      
+
       <h1 className="font-semibold text-2xl mb-8 tracking-tighter">
-        #{params.tag}
+        #{tag}
       </h1>
-      
+
       <div className="grid gap-4 grid-cols-1">
         {snippets.map(snippet => (
-          <SnippetCard 
-            key={snippet.slug} 
-            snippet={snippet} 
+          <SnippetCard
+            key={snippet.slug}
+            snippet={snippet}
           />
         ))}
       </div>
