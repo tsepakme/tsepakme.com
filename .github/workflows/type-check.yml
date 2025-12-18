@@ -27,4 +27,4 @@ jobs:
       run: npx tsc --noEmit
       
     - name: Next.js build check
-      run: npm run build -- --no-lint
+      run: npm run build
